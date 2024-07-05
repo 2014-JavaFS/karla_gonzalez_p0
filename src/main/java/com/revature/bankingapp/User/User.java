@@ -1,4 +1,4 @@
-package src;
+package com.revature.bankingapp.User;
 
 public class User {
     private String firstName;
