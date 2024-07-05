@@ -1,5 +1,7 @@
 package src;
 
+import java.util.Scanner;
+
 public class BankingApplication {
     /*
     Must-Have Functionalities:
@@ -45,6 +47,68 @@ public class BankingApplication {
 
 
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
 
+        System.out.println("Welcome to this bank app (Name TBD)");
+        System.out.println("Please login or sign up to continue:");
+        System.out.println("1. Log In /n2. Sign Up");
+        System.out.println("3. Exit");
+
+        int opt = scanner.nextInt();
+
+        switch (opt) {
+            case 1:
+                System.out.println("Logging In");
+                //TODO: Implement method to validate login credentials
+                break;
+            case 2:
+                System.out.println("Signing Up");
+                //TODO: Implement method to sign up new users
+                break;
+            case 3:
+                System.out.println("Exiting Application");
+                break;
+            default:
+                System.out.println("Invalid input. Please enter number 1 or 2");
+        }
+
+        //TODO: Implement method to check for successful login/signup before accessing next menu
+
+        User user = new User();
+        Account account = new Account();
+
+        System.out.printf("Welcome %s %n", user.getFirstName());
+        System.out.println("1. View Your Account Balance");
+        System.out.println("2. Make a Deposit");
+        System.out.println("3. Make a Withdrawal");
+        System.out.println("4. Create a Checking/Savings Account");
+        System.out.println("5. Exit Application");
+        System.out.println("Please enter a numeric choice: ");
+        opt = scanner.nextInt();
+
+        switch (opt) {
+            case 1:
+                System.out.println("Viewing Account Balance(s)");
+                //TODO: Implement method to view account balance(s)
+                break;
+            case 2:
+                System.out.println("Making a Deposit");
+                //TODO: Implement method to make deposits
+                break;
+            case 3:
+                System.out.println("Making a Withdrawal");
+                //TODO: Implement method to make withdrawals
+                break;
+            case 4:
+                System.out.println("Creating an Account");
+                //TODO: Implement method to create new accounts
+
+                break;
+            case 5:
+                System.out.println("Exiting Application.");
+                break;
+            default:
+                System.out.println("Invalid input. Please enter a number 1-4");
+        }
     }
 }
