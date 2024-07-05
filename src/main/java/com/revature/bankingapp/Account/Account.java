@@ -1,4 +1,4 @@
-package src;
+package com.revature.bankingapp.Account;
 
 public class Account {
     private String accountType;

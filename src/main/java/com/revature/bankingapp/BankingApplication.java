@@ -1,4 +1,7 @@
-package src;
+package com.revature.bankingapp;
+
+import com.revature.bankingapp.Account.Account;
+import com.revature.bankingapp.User.User;
 
 import java.util.Scanner;
 
