@@ -90,6 +90,8 @@ public class BankingApplication {
         } while (opt != 3);
     }
 
+    //TODO: If user doesn't have an account, prompt them to create one first
+
     private static void accessAccount(Scanner scanner, User user, UserController userController) {
         Account account = new Account();
         AccountService accountService = new AccountService();

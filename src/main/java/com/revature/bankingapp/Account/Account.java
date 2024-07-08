@@ -1,33 +1,35 @@
 package com.revature.bankingapp.Account;
 
-import java.security.PublicKey;
-
 public class Account {
-    private String accountType;
-    private String accountId;
+    private AccountType accountType;
+    private int accountId;
     private double accountBalance;
+    public enum AccountType {
+        CHECKING,
+        SAVINGS
+    };
 
     public Account() {}
 
-    public Account(String accountType, String accountId, double accountBalance) {
+    public Account(AccountType accountType, int accountId, double accountBalance) {
         this.accountType = accountType;
         this.accountId = accountId;
         this.accountBalance = accountBalance;
     }
 
-    public String getAccountType() {
+    public AccountType getAccountType() {
         return accountType;
     }
 
-    public void setAccountType(String accountType) {
+    public void setAccountType(AccountType accountType) {
         this.accountType = accountType;
     }
 
-    public String getAccountId() {
+    public int getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(String accountId) {
+    public void setAccountId(int accountId) {
         this.accountId = accountId;
     }
 
@@ -41,6 +43,6 @@ public class Account {
 
     @Override
     public String toString() {
-        return "Account Type: " + accountType + "\nAccount Id: " + accountId + "\nBalance: " + accountBalance;
+        return "Account Type: " + accountType + "\nBalance: " + accountBalance;
     }
 }

@@ -14,18 +14,16 @@ public class AccountController {
     }
 
     public Account createAccount(User user) {
-        String accountType = "Checking";
-        //TODO: Reconsider id
-        String accountId = "c" + (user.getUserId() % 5);
+        Account.AccountType accountType = Account.AccountType.valueOf("CHECKING");
 
         System.out.println("Select account type");
         System.out.println("1. Checking\n2. Savings");
-        if(scanner.nextInt() == 2) accountType = "Savings";
+        if(scanner.nextInt() == 2) accountType = Account.AccountType.valueOf("SAVINGS");
 
         System.out.print("\nEnter initial deposit amount: $");
         double accountBalance = scanner.nextDouble();
 
-        return new Account(accountType, accountId, accountBalance);
+        return new Account(accountType, user.getUserId(), accountBalance);
     }
 
     public void deposit(Account account) {
