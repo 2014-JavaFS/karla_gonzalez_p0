@@ -20,7 +20,7 @@ public class UserController {
     // Sign up new users.
     // Here I am making the assumption that users will be provided with their user id before creating an account
     // with this application
-    // TODO: Ask for pasword once database is created
+    // TODO: Ask for password once database is created
     public User createUser() {
         scanner = new Scanner(System.in);
 
@@ -47,13 +47,12 @@ public class UserController {
         return new User(firstName, lastName, email, userId);
     }
 
-    // TODO: Unable to print, user null?
     public void viewUserInfo(User user) {
         System.out.println(user.toString());
     }
+
 /*
-    // Start working on login after creating database
-    // TODO: Should this be here?
+    // TODO: Start working on login after creating database
 
     public boolean login() {
         // TODO: Implement method to validate login credentials

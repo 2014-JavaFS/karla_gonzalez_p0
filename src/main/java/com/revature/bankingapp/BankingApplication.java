@@ -2,6 +2,7 @@ package com.revature.bankingapp;
 
 import com.revature.bankingapp.Account.Account;
 import com.revature.bankingapp.Account.AccountController;
+import com.revature.bankingapp.Account.AccountService;
 import com.revature.bankingapp.User.User;
 import com.revature.bankingapp.User.UserController;
 import com.revature.bankingapp.User.UserService;
@@ -90,37 +91,41 @@ public class BankingApplication {
     }
 
     private static void accessAccount(Scanner scanner, User user, UserController userController) {
-        AccountController accountController = new AccountController();
+        Account account = new Account();
+        AccountService accountService = new AccountService();
+        AccountController accountController = new AccountController(scanner, accountService);
 
         int opt;
 
         do {
-            System.out.println("Welcome!");
+            System.out.println("\nWelcome " + user.getFirstName());
             System.out.println("1. View Your Account Information");
             System.out.println("2. Make a Deposit");
             System.out.println("3. Make a Withdrawal");
             System.out.println("4. Create a Checking/Savings Account");
             System.out.println("5. Log Out");
-            System.out.println("Please enter a numeric choice: ");
+            System.out.print("Please enter a numeric choice: ");
             opt = scanner.nextInt();
+
+            System.out.println();
 
             switch (opt) {
                 case 1:
                     System.out.println("Viewing Account Information");
                     userController.viewUserInfo(user);
-                    accountController.viewBalance();
+                    accountController.viewBalance(account);
                     break;
                 case 2:
                     System.out.println("Making a Deposit");
-                    accountController.deposit();
+                    accountController.deposit(account);
                     break;
                 case 3:
                     System.out.println("Making a Withdrawal");
-                    accountController.withdraw();
+                    accountController.withdraw(account);
                     break;
                 case 4:
                     System.out.println("Creating an Account");
-                    accountController.createAccount();
+                    account = accountController.createAccount(user);
                     break;
                 case 5:
                     System.out.println("Exiting Application.");

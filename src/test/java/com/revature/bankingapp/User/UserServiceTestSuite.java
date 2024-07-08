@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class userServiceTestSuite {
+public class UserServiceTestSuite {
     private UserService uServ;
 
     @BeforeEach
