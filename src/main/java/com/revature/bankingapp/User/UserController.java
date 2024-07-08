@@ -9,6 +9,13 @@ public class UserController {
 
     // TODO: Implement method to sign up new users
     public void createUser() {
+        User newUser;
+
+        System.out.println("Please enter your first name: ");
+
+        System.out.println("Please enter your last name: ");
+        // TODO: Make sure a valid email address is entered (should include '@' and end in ".com/.net./edu/etc.")
+        System.out.println("Please enter your email address: ");
     }
 
     // TODO: Should this be here?
