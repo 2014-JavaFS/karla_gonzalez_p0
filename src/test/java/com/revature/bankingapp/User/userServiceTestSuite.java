@@ -38,4 +38,13 @@ public class userServiceTestSuite {
         InvalidInputException e = assertThrows(InvalidInputException.class, () -> uServ.validateMinInfo(user));
         assertEquals("User Id should be exactly 6 digits long", e.getMessage());
     }
+
+    @Test
+    public void validateMinInfo_InvalidEmailFormat() throws InvalidInputException {
+        User user = new User("John", "Doe", "jDoeemail@net", 100000);
+
+        InvalidInputException e = assertThrows(InvalidInputException.class, () -> uServ.validateMinInfo(user));
+        assertEquals("Invalid email address", e.getMessage());
+    }
+
 }
