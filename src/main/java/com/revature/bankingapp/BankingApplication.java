@@ -1,7 +1,9 @@
 package com.revature.bankingapp;
 
 import com.revature.bankingapp.Account.Account;
+import com.revature.bankingapp.Account.AccountController;
 import com.revature.bankingapp.User.User;
+import com.revature.bankingapp.User.UserController;
 
 import java.util.Scanner;
 
@@ -50,68 +52,83 @@ public class BankingApplication {
 
 
     public static void main(String[] args) {
+        UserController userController = new UserController();
+
         Scanner scanner = new Scanner(System.in);
+        int opt;
 
-        System.out.println("Welcome to this bank app (Name TBD)");
-        System.out.println("Please login or sign up to continue:");
-        System.out.println("1. Log In /n2. Sign Up");
-        System.out.println("3. Exit");
+        boolean loggedIn = false;
 
-        int opt = scanner.nextInt();
+        do {
+            System.out.println("Welcome to this bank app (Name TBD)");
+            System.out.println("Please login or sign up to continue:");
+            System.out.println("1. Log In \n2. Sign Up");
+            System.out.println("3. Exit");
 
-        switch (opt) {
-            case 1:
-                System.out.println("Logging In");
-                //TODO: Implement method to validate login credentials
-                break;
-            case 2:
-                System.out.println("Signing Up");
-                //TODO: Implement method to sign up new users
-                break;
-            case 3:
-                System.out.println("Exiting Application");
-                break;
-            default:
-                System.out.println("Invalid input. Please enter number 1 or 2");
-        }
+            opt = scanner.nextInt();
+
+            switch (opt) {
+                case 1:
+                    System.out.println("Logging In");
+                    if (userController.login()) accessAccount();
+                    break;
+                case 2:
+                    System.out.println("Signing Up");
+                    userController.createUser();
+                    break;
+                case 3:
+                    System.out.println("Exiting Application");
+                    break;
+                default:
+                    System.out.println("Invalid input. Please enter number 1 or 2");
+            }
+        } while (opt != 3);
+
 
         //TODO: Implement method to check for successful login/signup before accessing next menu
 
         User user = new User();
-        Account account = new Account();
 
-        System.out.printf("Welcome %s %n", user.getFirstName());
-        System.out.println("1. View Your Account Balance");
-        System.out.println("2. Make a Deposit");
-        System.out.println("3. Make a Withdrawal");
-        System.out.println("4. Create a Checking/Savings Account");
-        System.out.println("5. Exit Application");
-        System.out.println("Please enter a numeric choice: ");
-        opt = scanner.nextInt();
+    }
 
-        switch (opt) {
-            case 1:
-                System.out.println("Viewing Account Balance(s)");
-                //TODO: Implement method to view account balance(s)
-                break;
-            case 2:
-                System.out.println("Making a Deposit");
-                //TODO: Implement method to make deposits
-                break;
-            case 3:
-                System.out.println("Making a Withdrawal");
-                //TODO: Implement method to make withdrawals
-                break;
-            case 4:
-                System.out.println("Creating an Account");
-                //TODO: Implement method to create new accounts
+    private static void accessAccount() {
+        Scanner scanner = new Scanner(System.in);
+        AccountController accountController = new AccountController();
+        int opt;
 
-                break;
-            case 5:
-                System.out.println("Exiting Application.");
-                break;
-            default:
-                System.out.println("Invalid input. Please enter a number 1-4");
-        }
+        do {
+            System.out.println("Welcome!");
+            System.out.println("1. View Your Account Balance");
+            System.out.println("2. Make a Deposit");
+            System.out.println("3. Make a Withdrawal");
+            System.out.println("4. Create a Checking/Savings Account");
+            System.out.println("5. Exit Application");
+            System.out.println("Please enter a numeric choice: ");
+            opt = scanner.nextInt();
+
+            switch (opt) {
+                case 1:
+                    System.out.println("Viewing Account Balance(s)");
+                    accountController.viewBalance();
+                    break;
+                case 2:
+                    System.out.println("Making a Deposit");
+                    accountController.deposit();
+                    break;
+                case 3:
+                    System.out.println("Making a Withdrawal");
+                    accountController.withdraw();
+                    break;
+                case 4:
+                    System.out.println("Creating an Account");
+                    accountController.createAccount();
+                    break;
+                case 5:
+                    System.out.println("Exiting Application.");
+                    break;
+                default:
+                    System.out.println("Invalid input. Please enter a number 1-4");
+            }
+        } while (opt != 5);
     }
 }
