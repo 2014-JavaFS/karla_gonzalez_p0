@@ -6,8 +6,17 @@ public class User {
     private String email;
     private int userId;
 
+    // Constructors
     public User() {}
 
+    public User(String firstName, String lastName, String email, int userId) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.userId = userId;
+    }
+
+    // Getters & Setters
     public String getFirstName() {
         return firstName;
     }
@@ -39,4 +48,10 @@ public class User {
     public void setUserId(int userId) {
         this.userId = userId;
     }
+
+    @Override
+    public String toString() {
+        return "Name: " + firstName + " " + lastName + "\nEmail: " + email + "\nUse Id: " + userId;
+    }
 }
+

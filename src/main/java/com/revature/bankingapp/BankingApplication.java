@@ -70,11 +70,12 @@ public class BankingApplication {
             switch (opt) {
                 case 1:
                     System.out.println("Logging In");
-                    if (userController.login()) accessAccount();
+                    //if (userController.login()) accessAccount(userId);
                     break;
                 case 2:
                     System.out.println("Signing Up");
-                    userController.createUser();
+                    int userId = userController.createUser();
+                    if (userId != -1) accessAccount(userId);
                     break;
                 case 3:
                     System.out.println("Exiting Application");
@@ -83,22 +84,18 @@ public class BankingApplication {
                     System.out.println("Invalid input. Please enter number 1 or 2");
             }
         } while (opt != 3);
-
-
-        //TODO: Implement method to check for successful login/signup before accessing next menu
-
-        User user = new User();
-
     }
 
-    private static void accessAccount() {
+    private static void accessAccount(int userId) {
         Scanner scanner = new Scanner(System.in);
         AccountController accountController = new AccountController();
+        UserController userController = new UserController();
+
         int opt;
 
         do {
             System.out.println("Welcome!");
-            System.out.println("1. View Your Account Balance");
+            System.out.println("1. View Your Account Information");
             System.out.println("2. Make a Deposit");
             System.out.println("3. Make a Withdrawal");
             System.out.println("4. Create a Checking/Savings Account");
@@ -108,7 +105,8 @@ public class BankingApplication {
 
             switch (opt) {
                 case 1:
-                    System.out.println("Viewing Account Balance(s)");
+                    System.out.println("Viewing Account Information");
+                    userController.viewUserInfo(userId);
                     accountController.viewBalance();
                     break;
                 case 2:
