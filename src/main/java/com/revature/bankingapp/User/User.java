@@ -51,7 +51,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "Name: " + firstName + " " + lastName + "\nEmail: " + email + "\nUse Id: " + userId;
+        return "Name: " + firstName + " " + lastName + "\nEmail: " + email + "\nUser Id: " + userId;
     }
 }
 

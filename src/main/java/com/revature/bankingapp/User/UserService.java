@@ -10,9 +10,8 @@ public class UserService {
     private Predicate<String> isNotEmpty = str -> str != null && !str.isBlank();
 
 
-
     /*
-        Ensures all information is given when creating a new user
+        Ensures all information is given (and valid) when creating a new user
      */
     public void validateMinInfo(User user) throws InvalidInputException {
         String regexPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
@@ -23,9 +22,10 @@ public class UserService {
             throw new InvalidInputException("User is null as it has not been instantiated in memory");
 
         int userId = user.getUserId();
+        String email = user.getEmail();
 
         // Ensure user email, first name, and last name, are not left blank
-        if (!isNotEmpty.test(user.getEmail()) || !isNotEmpty.test(user.getFirstName()) || !isNotEmpty.test(user.getLastName()))
+        if (!isNotEmpty.test(email) || !isNotEmpty.test(user.getFirstName()) || !isNotEmpty.test(user.getLastName()))
             throw new InvalidInputException("One or more values are empty");
 
         // Ensure user id is exactly 6 digits long
@@ -33,7 +33,7 @@ public class UserService {
             throw new InvalidInputException("User Id should be exactly 6 digits long");
 
         // Ensure email is in the correct format using regex pattern
-        if (!Pattern.compile(regexPattern).matcher(user.getEmail()).matches())
+        if (!Pattern.compile(regexPattern).matcher(email).matches())
             throw new InvalidInputException("Invalid email address");
     }
 }

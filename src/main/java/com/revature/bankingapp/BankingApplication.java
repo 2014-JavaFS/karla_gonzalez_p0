@@ -4,6 +4,7 @@ import com.revature.bankingapp.Account.Account;
 import com.revature.bankingapp.Account.AccountController;
 import com.revature.bankingapp.User.User;
 import com.revature.bankingapp.User.UserController;
+import com.revature.bankingapp.User.UserService;
 
 import java.util.Scanner;
 
@@ -52,12 +53,13 @@ public class BankingApplication {
 
 
     public static void main(String[] args) {
-        UserController userController = new UserController();
-
         Scanner scanner = new Scanner(System.in);
-        int opt;
 
-        boolean loggedIn = false;
+        UserService userService = new UserService();
+        UserController userController = new UserController(scanner, userService);
+
+        int opt;
+        //boolean loggedIn = false;
 
         do {
             System.out.println("Welcome to this bank app (Name TBD)");
@@ -69,13 +71,14 @@ public class BankingApplication {
 
             switch (opt) {
                 case 1:
+                    // TODO: Implement login method once database is created
                     System.out.println("Logging In");
                     //if (userController.login()) accessAccount(userId);
                     break;
                 case 2:
                     System.out.println("Signing Up");
-                    int userId = userController.createUser();
-                    if (userId != -1) accessAccount(userId);
+                    // TODO: Check for successful signup before continuing
+                    accessAccount(scanner, userController.createUser(), userController);
                     break;
                 case 3:
                     System.out.println("Exiting Application");
@@ -86,10 +89,8 @@ public class BankingApplication {
         } while (opt != 3);
     }
 
-    private static void accessAccount(int userId) {
-        Scanner scanner = new Scanner(System.in);
+    private static void accessAccount(Scanner scanner, User user, UserController userController) {
         AccountController accountController = new AccountController();
-        UserController userController = new UserController();
 
         int opt;
 
@@ -99,14 +100,14 @@ public class BankingApplication {
             System.out.println("2. Make a Deposit");
             System.out.println("3. Make a Withdrawal");
             System.out.println("4. Create a Checking/Savings Account");
-            System.out.println("5. Exit Application");
+            System.out.println("5. Log Out");
             System.out.println("Please enter a numeric choice: ");
             opt = scanner.nextInt();
 
             switch (opt) {
                 case 1:
                     System.out.println("Viewing Account Information");
-                    userController.viewUserInfo(userId);
+                    userController.viewUserInfo(user);
                     accountController.viewBalance();
                     break;
                 case 2:
