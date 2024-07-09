@@ -14,6 +14,7 @@ create table accounts(
 	account_balance numeric not null check(account_balance >= 0)
 );
 
+-- For testing
 insert into users (user_id, first_name, last_name, email, password)
 	values(123123, 'John', 'Doe', 'jdoe2@email.net', 'R3v@2tur');
 

@@ -26,12 +26,13 @@ public class UserController {
 
         scanner = new Scanner(System.in);
 
-        // TODO: Use string method to capitalize first letter in first and last name
         System.out.println("Please enter your first name: ");
         String firstName = scanner.next();
+        firstName = firstName.substring(0, 1).toUpperCase() + firstName.substring(1);
 
         System.out.println("Please enter your last name: ");
         String lastName = scanner.next();
+        lastName = lastName.substring(0, 1).toUpperCase() + lastName.substring(1);
 
         System.out.println("Please enter your email address: ");
         String email = scanner.next();

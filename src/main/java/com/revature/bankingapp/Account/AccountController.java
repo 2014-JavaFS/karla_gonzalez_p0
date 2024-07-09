@@ -28,7 +28,6 @@ public class AccountController {
         return true;
     };
 
-
     public AccountController(Scanner scanner, AccountService accountService) {
         this.scanner = scanner;
         this.accountService = accountService;
@@ -50,7 +49,6 @@ public class AccountController {
     }
 
     public void deposit(Account account) {
-        //TODO: Round to two decimal places
         double amt = 0.0;
         boolean validAmt = false;
 

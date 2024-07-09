@@ -53,12 +53,12 @@ public class BankingApplication {
         8. Generation of basic design documents (e.g. relational diagram, class diagram, flows, etc.)
     */
 
-
     public static void main(String[] args) {
         int opt;
 
         Scanner scanner = new Scanner(System.in);
 
+        User user;
         UserService userService = new UserService();
         UserController userController = new UserController(scanner, userService);
 
@@ -73,13 +73,15 @@ public class BankingApplication {
             switch (opt) {
                 case 1:
                     // TODO: Implement login method once database is created
+                    // TODO: Throw exception if email not found
                     System.out.println("Logging In");
                     //if (userController.login()) accessAccount(userId);
                     break;
                 case 2:
                     System.out.println("Signing Up");
-                    // TODO: Check for successful signup before continuing
-                    accessAccount(scanner, userController.createUser(), userController);
+                    user = userController.createUser();
+                    if (user != null)
+                        createAccount(scanner, user, userController);
                     break;
                 case 3:
                     System.out.println("Exiting Application");
@@ -90,24 +92,29 @@ public class BankingApplication {
         } while (opt != 3);
     }
 
-    //TODO: If user doesn't have an account, prompt them to create one first
-
-    private static void accessAccount(Scanner scanner, User user, UserController userController) {
-        //TODO: Once logged in, use userID to find existing account and info
-        Account account = new Account();
+    private static void createAccount(Scanner scanner, User user, UserController userController) {
         AccountService accountService = new AccountService();
         AccountController accountController = new AccountController(scanner, accountService);
 
-        int opt;
+        System.out.println("\nCreate a Savings or Checking account to continue");
+        Account account = accountController.createAccount(user);
 
-        //TODO: Prompt user to create an account if no account found
+        if (account != null)
+            accessAccount(scanner, user, userController, account);
+    }
+
+    private static void accessAccount(Scanner scanner, User user, UserController userController, Account account) {
+        //TODO: Once logged in, use userID to find existing account and info
+        int opt;
+        AccountService accountService = new AccountService();
+        AccountController accountController = new AccountController(scanner, accountService);
+
         do {
             System.out.println("\nWelcome " + user.getFirstName());
             System.out.println("1. View Your Account Information");
             System.out.println("2. Make a Deposit");
             System.out.println("3. Make a Withdrawal");
-            System.out.println("4. Create a Checking/Savings Account");
-            System.out.println("5. Log Out");
+            System.out.println("4. Log Out");
             System.out.print("Please enter a numeric choice: ");
             opt = scanner.nextInt();
 
@@ -120,25 +127,24 @@ public class BankingApplication {
                     accountController.viewBalance(account);
                     break;
                 case 2:
-                    //TODO: Do not allow withdrawals if dollar amt is 0 or no account is found
                     System.out.println("Making a Deposit");
                     accountController.deposit(account);
                     break;
                 case 3:
-                    //TODO: Do not allow deposits if no account is found
+                    if(account.getAccountBalance() <= 0) {
+                        System.out.println("Insufficient funds. Unable to make a withdrawal at this time");
+                        break;
+                    }
+
                     System.out.println("Making a Withdrawal");
                     accountController.withdraw(account);
                     break;
                 case 4:
-                    System.out.println("Creating an Account");
-                    account = accountController.createAccount(user);
-                    break;
-                case 5:
                     System.out.println("Exiting Application.");
                     break;
                 default:
                     System.out.println("Invalid input. Please enter a number 1-4");
             }
-        } while (opt != 5);
+        } while (opt != 4);
     }
 }

@@ -1,8 +1,8 @@
 package com.revature.bankingapp.Account;
 
 public class Account {
+    private int userId;
     private AccountType accountType;
-    private int accountId;
     private double accountBalance;
     public enum AccountType {
         CHECKING,
@@ -13,7 +13,7 @@ public class Account {
 
     public Account(AccountType accountType, int accountId, double accountBalance) {
         this.accountType = accountType;
-        this.accountId = accountId;
+        this.userId = accountId;
         this.accountBalance = accountBalance;
     }
 
@@ -26,11 +26,11 @@ public class Account {
     }
 
     public int getAccountId() {
-        return accountId;
+        return userId;
     }
 
     public void setAccountId(int accountId) {
-        this.accountId = accountId;
+        this.userId = accountId;
     }
 
     public double getAccountBalance() {
@@ -43,6 +43,6 @@ public class Account {
 
     @Override
     public String toString() {
-        return "Account Type: " + accountType + "\nBalance: " + accountBalance;
+        return "Account Type: " + accountType + "\nBalance: $" + accountBalance;
     }
 }

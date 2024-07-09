@@ -22,5 +22,4 @@ public class AccountServiceTestSuite {
         InvalidInputException e = assertThrows(InvalidInputException.class, () -> accServ.validateAccountInfo(account));
         assertEquals("Balance cannot be less than zero", e.getMessage());
     }
-
 }
