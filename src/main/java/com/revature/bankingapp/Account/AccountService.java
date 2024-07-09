@@ -2,10 +2,7 @@ package com.revature.bankingapp.Account;
 
 import com.revature.bankingapp.util.exceptions.InvalidInputException;
 
-import java.util.function.Predicate;
-
 public class AccountService {
-    private Predicate<String> isNotEmpty = str -> str != null && !str.isBlank();
 
     public void validateAccountInfo(Account account) throws InvalidInputException {
         if (account == null)
@@ -14,19 +11,10 @@ public class AccountService {
         double balance = account.getAccountBalance();
 
         if (balance < 0)
-            throw new InvalidInputException("Balance should be greater than or equal to zero");
+            throw new InvalidInputException("Balance cannot be less than zero");
 
-        /*
-        if (!isNotEmpty.test(account.getAccountType()))
-            throw new InvalidInputException("Account type is null");
-
-         */
+        if (account.getAccountType() == null)
+            throw new InvalidInputException("Account type should not be null");
     }
-
-    // validate withdrawal amt
-
-    // validate deposit amt
-
-
 
 }

@@ -1,7 +1,11 @@
 package com.revature.bankingapp.Account;
 
+import com.revature.bankingapp.util.exceptions.InvalidInputException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AccountServiceTestSuite {
     private AccountService accServ;
@@ -11,7 +15,12 @@ public class AccountServiceTestSuite {
         accServ = new AccountService();
     }
 
-    // TODO: Test for valid deposit and withdrawal amounts
+    @Test
+    public void validateAccountInfo_MinBalance() throws InvalidInputException {
+        Account account = new Account(Account.AccountType.CHECKING, 123123, -78.54);
 
-    // TODO: Test for negative deposit and withdrawal amounts
+        InvalidInputException e = assertThrows(InvalidInputException.class, () -> accServ.validateAccountInfo(account));
+        assertEquals("Balance cannot be less than zero", e.getMessage());
+    }
+
 }

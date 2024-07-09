@@ -1,12 +1,33 @@
 package com.revature.bankingapp.Account;
 
 import com.revature.bankingapp.User.User;
+import com.revature.bankingapp.util.ScannerValidator;
+import com.revature.bankingapp.util.exceptions.InvalidInputException;
 
 import java.util.Scanner;
 
 public class AccountController {
     public Scanner scanner;
     private AccountService accountService;
+
+    ScannerValidator anyInt = (scanner, errorMsg) -> {
+        if(!scanner.hasNextInt()) {
+            System.out.println(errorMsg);
+            scanner.next();
+            return false;
+        }
+        return true;
+    };
+
+    ScannerValidator anyDouble = (scanner, errorMsg) -> {
+        if(!scanner.hasNextDouble()) {
+            System.out.println(errorMsg);
+            scanner.next();
+            return false;
+        }
+        return true;
+    };
+
 
     public AccountController(Scanner scanner, AccountService accountService) {
         this.scanner = scanner;
@@ -18,7 +39,9 @@ public class AccountController {
 
         System.out.println("Select account type");
         System.out.println("1. Checking\n2. Savings");
-        if(scanner.nextInt() == 2) accountType = Account.AccountType.valueOf("SAVINGS");
+
+        if(scanner.nextInt() == 2)
+            accountType = Account.AccountType.valueOf("SAVINGS");
 
         System.out.print("\nEnter initial deposit amount: $");
         double accountBalance = scanner.nextDouble();
@@ -27,26 +50,70 @@ public class AccountController {
     }
 
     public void deposit(Account account) {
-        //TODO: Ensure amt > $0 && <= $10,000
-        System.out.print("\nEnter amount to deposit including cents ($##.##): $");
-        double amt = scanner.nextDouble();
+        //TODO: Round to two decimal places
+        double amt = 0.0;
+        boolean validAmt = false;
+
+        System.out.println();
+        //TODO: Add a way to escape if user changes their mind
+        do {
+            System.out.print("Enter amount to deposit ($##.##): $");
+
+            if(!anyDouble.isValid(scanner, "\nInvalid data type, please enter a dollar amount"))
+                continue;
+
+            amt = scanner.nextDouble();
+
+            if (amt <= 0) {
+                System.out.println("\nAmount should be greater than zero");
+                continue;
+            }
+            if (amt > 10000) {
+                System.out.println("\nDeposit limit is $10,000");
+                continue;
+            }
+
+            validAmt = true;
+        } while (!validAmt);
 
         amt += account.getAccountBalance();
         account.setAccountBalance(amt);
     }
 
     public void withdraw(Account account) {
-        //TODO: Ensure amount doesn't exceed balance
-        //TODO: Ensure amount is greater than zero
-        System.out.print("\nEnter amount to withdraw including cents ($##.##): $");
-        double amt = scanner.nextDouble();
+        //TODO: Add a way to escape if user changes their mind
 
-        amt -= account.getAccountBalance();
-        account.setAccountBalance(amt);
+        double amt = 0.0;
+        double currentBalance = account.getAccountBalance();
+        boolean validAmt = false;
+
+        System.out.println();
+
+        do {
+            System.out.print("Enter amount to withdraw ($##.##): $");
+
+            if(!anyDouble.isValid(scanner, "\nInvalid data type, please enter a dollar amount"))
+                continue;
+
+            amt = scanner.nextDouble();
+
+            if (amt <= 0) {
+                System.out.println("\nAmount should be greater than zero");
+                continue;
+            }
+            if (amt > currentBalance) {
+                System.out.println("\nCannot withdraw more than your current account balance");
+                continue;
+            }
+
+            validAmt = true;
+        } while (!validAmt);
+
+        currentBalance -= amt;
+        account.setAccountBalance(currentBalance);
     }
 
     public void viewBalance(Account account) {
-        // TODO: If no account found, print nothing
-        System.out.println(account.toString());
+            System.out.println(account.toString());
     }
 }

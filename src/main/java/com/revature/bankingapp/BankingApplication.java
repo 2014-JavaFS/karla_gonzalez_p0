@@ -6,6 +6,7 @@ import com.revature.bankingapp.Account.AccountService;
 import com.revature.bankingapp.User.User;
 import com.revature.bankingapp.User.UserController;
 import com.revature.bankingapp.User.UserService;
+import com.revature.bankingapp.util.ScannerValidator;
 
 import java.util.Scanner;
 
@@ -54,13 +55,12 @@ public class BankingApplication {
 
 
     public static void main(String[] args) {
+        int opt;
+
         Scanner scanner = new Scanner(System.in);
 
         UserService userService = new UserService();
         UserController userController = new UserController(scanner, userService);
-
-        int opt;
-        //boolean loggedIn = false;
 
         do {
             System.out.println("Welcome to this bank app (Name TBD)");
@@ -93,12 +93,14 @@ public class BankingApplication {
     //TODO: If user doesn't have an account, prompt them to create one first
 
     private static void accessAccount(Scanner scanner, User user, UserController userController) {
+        //TODO: Once logged in, use userID to find existing account and info
         Account account = new Account();
         AccountService accountService = new AccountService();
         AccountController accountController = new AccountController(scanner, accountService);
 
         int opt;
 
+        //TODO: Prompt user to create an account if no account found
         do {
             System.out.println("\nWelcome " + user.getFirstName());
             System.out.println("1. View Your Account Information");
@@ -118,10 +120,12 @@ public class BankingApplication {
                     accountController.viewBalance(account);
                     break;
                 case 2:
+                    //TODO: Do not allow withdrawals if dollar amt is 0 or no account is found
                     System.out.println("Making a Deposit");
                     accountController.deposit(account);
                     break;
                 case 3:
+                    //TODO: Do not allow deposits if no account is found
                     System.out.println("Making a Withdrawal");
                     accountController.withdraw(account);
                     break;
