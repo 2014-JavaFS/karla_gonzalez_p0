@@ -1,5 +1,8 @@
 package com.revature.bankingapp.Account;
 
+/**
+ *
+ */
 public class Account {
     private int userId;
     private AccountType accountType;
@@ -9,38 +12,78 @@ public class Account {
         SAVINGS
     };
 
-    public Account() {}
-
-    public Account(AccountType accountType, int accountId, double accountBalance) {
+    /**
+     * Constructor
+     *
+     * @param accountType       the type of account to be created, can be CHECKING or SAVINGS
+     * @param userId            the id of the user associated with this account
+     * @param accountBalance    the amount of money currently in the account
+     */
+    public Account(AccountType accountType, int userId, double accountBalance) {
         this.accountType = accountType;
-        this.userId = accountId;
+        this.userId = userId;
         this.accountBalance = accountBalance;
     }
 
+    /**
+     * Getter for accountType
+     *
+     * @return the type of account (SAVINGS or CHECKING)
+     */
     public AccountType getAccountType() {
         return accountType;
     }
 
+    /**
+     * Setter used for changing the account type
+     *
+     * @param accountType can be either CHECKING or SAVINGS
+     */
     public void setAccountType(AccountType accountType) {
         this.accountType = accountType;
     }
 
-    public int getAccountId() {
+    /**
+     * Getter used to retrieve the id of the account's owner
+     *
+     * @return int id of the user associated with the account
+     */
+    public int getUserId() {
         return userId;
     }
 
-    public void setAccountId(int accountId) {
-        this.userId = accountId;
+    /**
+     * Sets the user id
+     *
+     * @param userId numerical id of the account owner
+     */
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
+    /**
+     * Getter used to retrieve the amount of money in the account
+     *
+     * @return the amount of money currently in the account
+     */
     public double getAccountBalance() {
         return accountBalance;
     }
 
+    /**
+     * Setter used for changing the account balance
+     *
+     * @param accountBalance the amount to be changed to
+     */
     public void setAccountBalance(double accountBalance) {
         this.accountBalance = accountBalance;
     }
 
+    /**
+     * An override of the toString() method, used to print out the account information
+     *
+     * @return a string containing the account information
+     */
     @Override
     public String toString() {
         return "Account Type: " + accountType + "\nBalance: $" + accountBalance;

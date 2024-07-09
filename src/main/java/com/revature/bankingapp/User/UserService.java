@@ -5,12 +5,18 @@ import com.revature.bankingapp.util.exceptions.InvalidInputException;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
+/**
+ *
+ */
 public class UserService {
     // Return true if string is empty or null
     private Predicate<String> isNotEmpty = str -> str != null && !str.isBlank();
 
-    /*
-        Ensures all information is given (and valid) when creating a new user
+    /**
+     * Ensures all information is given (and valid) when creating a new user
+     *
+     * @param user the user currently using this application
+     * @throws InvalidInputException exception thrown when there is invalid information
      */
     public void validateMinInfo(User user) throws InvalidInputException {
         String emailPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"

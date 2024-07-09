@@ -28,11 +28,23 @@ public class AccountController {
         return true;
     };
 
+    /**
+     * constructor that requires dependencies to create an instance of this class
+     *
+     * @param scanner           used for accepting user input
+     * @param accountService    used for validating that input
+     */
     public AccountController(Scanner scanner, AccountService accountService) {
         this.scanner = scanner;
         this.accountService = accountService;
     }
 
+    /**
+     * Creates a new checking or savings account
+     *
+     * @param   user the user associated with the new account
+     * @return  the newly created account
+     */
     public Account createAccount(User user) {
         Account.AccountType accountType = Account.AccountType.valueOf("CHECKING");
 
@@ -41,13 +53,18 @@ public class AccountController {
 
         if(scanner.nextInt() == 2)
             accountType = Account.AccountType.valueOf("SAVINGS");
-
+        // TODO: Need input validation (no negatives, numbers only)
         System.out.print("\nEnter initial deposit amount: $");
         double accountBalance = scanner.nextDouble();
 
         return new Account(accountType, user.getUserId(), accountBalance);
     }
 
+    /**
+     * Increases the amount of money in the account
+     *
+     * @param account the account to add money to
+     */
     public void deposit(Account account) {
         double amt = 0.0;
         boolean validAmt = false;
@@ -78,6 +95,11 @@ public class AccountController {
         account.setAccountBalance(amt);
     }
 
+    /**
+     * reduces the amount of money in the account
+     *
+     * @param account the account to withdraw from
+     */
     public void withdraw(Account account) {
         //TODO: Add a way to escape if user changes their mind
 
@@ -111,6 +133,11 @@ public class AccountController {
         account.setAccountBalance(currentBalance);
     }
 
+    /**
+     * Prints the current amount in the user's account
+     *
+     * @param account the account information to print out
+     */
     public void viewBalance(Account account) {
             System.out.println(account.toString());
     }

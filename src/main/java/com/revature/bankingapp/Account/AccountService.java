@@ -4,10 +4,13 @@ import com.revature.bankingapp.util.exceptions.InvalidInputException;
 
 public class AccountService {
 
+    //TODO: Access database to find user account info
+    /*
     public Account findById(int id) {
-        //TODO: Access database to find user account info
+
         return new Account();
     }
+     */
 
     public void validateAccountInfo(Account account) throws InvalidInputException {
         if (account == null)
