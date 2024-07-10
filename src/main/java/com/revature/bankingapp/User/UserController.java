@@ -20,7 +20,6 @@ public class UserController {
 
     // Sign up new users.
     public User createUser() {
-        //TODO: Make sure id numbers aren't re-used. Use sql auto increment instead??
         Random rand = new Random();
         int userId = rand.nextInt(999999 - 100001) + 100000;
 
@@ -50,18 +49,15 @@ public class UserController {
         return new User(firstName, lastName, email, password, userId);
     }
 
+    /**
+     * Displays the user's information in the following format:
+     * Name: [firstName] [lastName]
+     * Email: [email]
+     * User Id: [userId]
+     *
+     * @param user the user whose information should be accessed
+     */
     public void viewUserInfo(User user) {
         System.out.println(user.toString());
     }
-
-/*
-    // TODO: Start working on login after creating database
-
-    public boolean login() {
-        // TODO: Implement method to validate login credentials
-        // return true if login was successful, else false
-
-        return true;
-    }
-    */
 }

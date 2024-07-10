@@ -7,6 +7,8 @@ import com.revature.bankingapp.User.User;
 import com.revature.bankingapp.User.UserController;
 import com.revature.bankingapp.User.UserService;
 import com.revature.bankingapp.util.ScannerValidator;
+import com.revature.bankingapp.util.auth.AuthController;
+import com.revature.bankingapp.util.auth.AuthService;
 
 import java.util.Scanner;
 
@@ -70,6 +72,7 @@ public class BankingApplication {
 
     /**
      * the main method. This will be where the program starts everytime.
+     * Prompts the user to either log in or sign up for a new account.
      *
      * @param args string of arguments inputted by the user
      */
@@ -81,54 +84,54 @@ public class BankingApplication {
         User user;
         UserService userService = new UserService();
         UserController userController = new UserController(scanner, userService);
+        AuthController authController = new AuthController(scanner, new AuthService(userService));
+
+        System.out.println("Welcome to this bank app (Name TBD)");
 
         do {
-            System.out.println("Welcome to this bank app (Name TBD)");
-            System.out.println("Please login or sign up to continue:");
+            System.out.println("\nPlease login or sign up to continue:");
             System.out.println("1. Log In\n2. Sign Up\n3. Exit");
             
-            if (anyInt.isValid(scanner, "Invalid input type. Please enter a number 1-3")) {
+            if (anyInt.isValid(scanner, "\nInvalid input type. Please enter a number 1-3")) {
                 opt = scanner.nextInt();
 
                 switch (opt) {
                     case 1:
-                        // TODO: Implement login method once database is created
-                        // TODO: Throw exception if email not found
-                        System.out.println("Logging In");
-                        //if (userController.login()) accessAccount(userId);
-                        break;
-                    case 2:
-                        System.out.println("Signing Up");
-                        user = userController.createUser();
+                        System.out.println("\nLogging In");
+                        user = authController.logIn();
+
                         if (user != null)
-                            createAccount(scanner, user, userController);
+                            accessAccount(scanner, user, userController);
                         break;
+
+                    case 2:
+                        System.out.println("\nSigning Up");
+                        user = userController.createUser();
+
+                        if (user != null)
+                            accessAccount(scanner, user, userController);
+                        break;
+
                     case 3:
-                        System.out.println("Exiting Application");
+                        System.out.println("\nExiting Application");
                         break;
+
                     default:
-                        System.out.println("Invalid input. Please enter number 1 or 2");
+                        System.out.println("\nInvalid input. Please enter number 1 or 2");
                 }
             }
         } while (opt != 3);
     }
 
-    private static void createAccount(Scanner scanner, User user, UserController userController) {
-        AccountService accountService = new AccountService();
-        AccountController accountController = new AccountController(scanner, accountService);
-
-        System.out.println("\nCreate a Savings or Checking account to continue");
-        Account account = accountController.createAccount(user);
-
-        if (account != null)
-            accessAccount(scanner, user, userController, account);
-    }
-
-    private static void accessAccount(Scanner scanner, User user, UserController userController, Account account) {
-        //TODO: Once logged in, use userID to find existing account and info
+    private static void accessAccount(Scanner scanner, User user, UserController userController) {
         int opt;
-        AccountService accountService = new AccountService();
-        AccountController accountController = new AccountController(scanner, accountService);
+        AccountController accountController = new AccountController(scanner, new AccountService());
+        Account account = accountController.getAccountById(user.getUserId());
+
+        if (account == null) {
+            System.out.println("\nCreate a Savings or Checking account to continue");
+            account = accountController.createAccount(user);
+        }
 
         do {
             System.out.println("\nWelcome " + user.getFirstName());
@@ -147,10 +150,12 @@ public class BankingApplication {
                     userController.viewUserInfo(user);
                     accountController.viewBalance(account);
                     break;
+
                 case 2:
                     System.out.println("Making a Deposit");
                     accountController.deposit(account);
                     break;
+
                 case 3:
                     if(account.getAccountBalance() <= 0) {
                         System.out.println("Insufficient funds. Unable to make a withdrawal at this time");
@@ -160,9 +165,11 @@ public class BankingApplication {
                     System.out.println("Making a Withdrawal");
                     accountController.withdraw(account);
                     break;
+
                 case 4:
                     System.out.println("Exiting Application.");
                     break;
+
                 default:
                     System.out.println("Invalid input. Please enter a number 1-4");
             }

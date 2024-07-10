@@ -47,4 +47,11 @@ public class UserService {
         if (!Pattern.compile(passwordPattern).matcher(password).matches())
             throw new InvalidInputException("Password doesn't fit security criteria");
     }
+
+    public User findByEmailAndPassword(String email, String password) {
+        //TODO: Use database to implement this method
+
+        // return user if email and password match, else return null
+        return null;
+    }
 }

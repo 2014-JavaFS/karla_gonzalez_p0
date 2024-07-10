@@ -171,4 +171,12 @@ public class AccountController {
     public void viewBalance(Account account) {
             System.out.println(account.toString());
     }
+
+    public Account getAccountById(int userId) {
+        Account account = null;
+
+        //TODO: Find user account in database using the user id
+
+        return account;
+    }
 }
