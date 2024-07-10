@@ -2,7 +2,6 @@ package com.revature.bankingapp.Account;
 
 import com.revature.bankingapp.User.User;
 import com.revature.bankingapp.util.ScannerValidator;
-import com.revature.bankingapp.util.exceptions.InvalidInputException;
 
 import java.util.Scanner;
 
@@ -10,6 +9,12 @@ public class AccountController {
     public Scanner scanner;
     private AccountService accountService;
 
+    /**
+     * An input validation method which ensures the user enters a numerical value wherever an integer is required.
+     * If the user input anything that isn't an integer, an error message is displayed
+     *
+     * returns true if the user inputs a number, otherwise it returns false.
+     */
     ScannerValidator anyInt = (scanner, errorMsg) -> {
         if(!scanner.hasNextInt()) {
             System.out.println(errorMsg);
@@ -19,6 +24,12 @@ public class AccountController {
         return true;
     };
 
+    /**
+     * An input validation method which ensures the user enters a numerical value wherever a double is required.
+     * If the user inputs anything that isn't a double, an error message is displayed.
+     *
+     * Returns true if the user inputs a number, otherwise it returns false.
+     */
     ScannerValidator anyDouble = (scanner, errorMsg) -> {
         if(!scanner.hasNextDouble()) {
             System.out.println(errorMsg);
@@ -46,18 +57,33 @@ public class AccountController {
      * @return  the newly created account
      */
     public Account createAccount(User user) {
-        Account.AccountType accountType = Account.AccountType.valueOf("CHECKING");
+        int opt;
+        boolean accountCreated = false;
+        Account.AccountType accountType = null;
 
-        System.out.println("Select account type");
-        System.out.println("1. Checking\n2. Savings");
+        do {
+            System.out.println("Select account type");
+            System.out.println("1. Checking\n2. Savings");
 
-        if(scanner.nextInt() == 2)
-            accountType = Account.AccountType.valueOf("SAVINGS");
-        // TODO: Need input validation (no negatives, numbers only)
-        System.out.print("\nEnter initial deposit amount: $");
-        double accountBalance = scanner.nextDouble();
+            if(anyInt.isValid(scanner, "\nInvalid data type, please enter either 1 or 2")) {
+                opt = scanner.nextInt();
 
-        return new Account(accountType, user.getUserId(), accountBalance);
+                switch (opt) {
+                    case 1:
+                        accountType = Account.AccountType.valueOf("CHECKING");
+                        accountCreated = true;
+                        break;
+                    case 2:
+                        accountType = Account.AccountType.valueOf("SAVINGS");
+                        accountCreated = true;
+                        break;
+                    default:
+                        System.out.println("Please enter either 1 or 2");
+                }
+            }
+        } while (!accountCreated);
+
+        return new Account(accountType, user.getUserId(), 0.0);
     }
 
     /**
@@ -70,29 +96,32 @@ public class AccountController {
         boolean validAmt = false;
 
         System.out.println();
-        //TODO: Add a way to escape if user changes their mind
+
         do {
-            System.out.print("Enter amount to deposit ($##.##): $");
+            System.out.print("Enter amount to deposit or -1 to cancel: $");
 
-            if(!anyDouble.isValid(scanner, "\nInvalid data type, please enter a dollar amount"))
-                continue;
+            if(anyDouble.isValid(scanner, "\nInvalid data type, please enter a dollar amount")) {
+                amt = scanner.nextDouble();
 
-            amt = scanner.nextDouble();
+                if (amt == -1)
+                    break;
+                if (amt <= 0) {
+                    System.out.println("\nAmount should be greater than zero");
+                    continue;
+                }
+                if (amt > 10000) {
+                    System.out.println("\nDeposit limit is $10,000");
+                    continue;
+                }
 
-            if (amt <= 0) {
-                System.out.println("\nAmount should be greater than zero");
-                continue;
+                validAmt = true;
             }
-            if (amt > 10000) {
-                System.out.println("\nDeposit limit is $10,000");
-                continue;
-            }
-
-            validAmt = true;
         } while (!validAmt);
 
-        amt += account.getAccountBalance();
-        account.setAccountBalance(amt);
+        if (validAmt) {
+            amt += account.getAccountBalance();
+            account.setAccountBalance(amt);
+        }
     }
 
     /**
@@ -101,8 +130,6 @@ public class AccountController {
      * @param account the account to withdraw from
      */
     public void withdraw(Account account) {
-        //TODO: Add a way to escape if user changes their mind
-
         double amt = 0.0;
         double currentBalance = account.getAccountBalance();
         boolean validAmt = false;
@@ -110,27 +137,30 @@ public class AccountController {
         System.out.println();
 
         do {
-            System.out.print("Enter amount to withdraw ($##.##): $");
+            System.out.print("Enter amount to withdraw or '-1' to cancel: $");
 
-            if(!anyDouble.isValid(scanner, "\nInvalid data type, please enter a dollar amount"))
-                continue;
+            if(anyDouble.isValid(scanner, "\nInvalid data type, please enter a dollar amount")) {
+                amt = scanner.nextDouble();
 
-            amt = scanner.nextDouble();
+                if (amt == -1)
+                    break;
+                if (amt <= 0) {
+                    System.out.println("\nAmount should be greater than zero");
+                    continue;
+                }
+                if (amt > currentBalance) {
+                    System.out.println("\nCannot withdraw more than your current account balance");
+                    continue;
+                }
 
-            if (amt <= 0) {
-                System.out.println("\nAmount should be greater than zero");
-                continue;
+                validAmt = true;
             }
-            if (amt > currentBalance) {
-                System.out.println("\nCannot withdraw more than your current account balance");
-                continue;
-            }
-
-            validAmt = true;
         } while (!validAmt);
 
-        currentBalance -= amt;
-        account.setAccountBalance(currentBalance);
+        if (validAmt) {
+            currentBalance -= amt;
+            account.setAccountBalance(currentBalance);
+        }
     }
 
     /**

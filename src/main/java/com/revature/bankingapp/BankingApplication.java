@@ -15,7 +15,7 @@ public class BankingApplication {
     Must-Have Functionalities:
         1. Register new user account
             - Password
-            - Username
+            - Email
             - First Name
             - Last Name
         2. Login
@@ -53,8 +53,28 @@ public class BankingApplication {
         8. Generation of basic design documents (e.g. relational diagram, class diagram, flows, etc.)
     */
 
+    /**
+     * An input validation method which ensures the user enters a numerical value wherever an integer is required.
+     * If the user input anything that isn't an integer, an error message is displayed
+     *
+     * returns true if the user inputs a number, otherwise it returns false.
+     */
+    static ScannerValidator anyInt = (scanner, errorMsg) -> {
+        if(!scanner.hasNextInt()) {
+            System.out.println(errorMsg);
+            scanner.next();
+            return false;
+        }
+        return true;
+    };
+
+    /**
+     * the main method. This will be where the program starts everytime.
+     *
+     * @param args string of arguments inputted by the user
+     */
     public static void main(String[] args) {
-        int opt;
+        int opt = 0;
 
         Scanner scanner = new Scanner(System.in);
 
@@ -65,29 +85,30 @@ public class BankingApplication {
         do {
             System.out.println("Welcome to this bank app (Name TBD)");
             System.out.println("Please login or sign up to continue:");
-            System.out.println("1. Log In \n2. Sign Up");
-            System.out.println("3. Exit");
+            System.out.println("1. Log In\n2. Sign Up\n3. Exit");
+            
+            if (anyInt.isValid(scanner, "Invalid input type. Please enter a number 1-3")) {
+                opt = scanner.nextInt();
 
-            opt = scanner.nextInt();
-
-            switch (opt) {
-                case 1:
-                    // TODO: Implement login method once database is created
-                    // TODO: Throw exception if email not found
-                    System.out.println("Logging In");
-                    //if (userController.login()) accessAccount(userId);
-                    break;
-                case 2:
-                    System.out.println("Signing Up");
-                    user = userController.createUser();
-                    if (user != null)
-                        createAccount(scanner, user, userController);
-                    break;
-                case 3:
-                    System.out.println("Exiting Application");
-                    break;
-                default:
-                    System.out.println("Invalid input. Please enter number 1 or 2");
+                switch (opt) {
+                    case 1:
+                        // TODO: Implement login method once database is created
+                        // TODO: Throw exception if email not found
+                        System.out.println("Logging In");
+                        //if (userController.login()) accessAccount(userId);
+                        break;
+                    case 2:
+                        System.out.println("Signing Up");
+                        user = userController.createUser();
+                        if (user != null)
+                            createAccount(scanner, user, userController);
+                        break;
+                    case 3:
+                        System.out.println("Exiting Application");
+                        break;
+                    default:
+                        System.out.println("Invalid input. Please enter number 1 or 2");
+                }
             }
         } while (opt != 3);
     }

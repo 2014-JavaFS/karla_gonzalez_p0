@@ -80,12 +80,14 @@ public class Account {
     }
 
     /**
-     * An override of the toString() method, used to print out the account information
+     * An override of the toString() method, used to print out the account information in the following format:
+     * Account Type: [CHECKING/SAVINGS]
+     * Balance: $##.##
      *
      * @return a string containing the account information
      */
     @Override
     public String toString() {
-        return "Account Type: " + accountType + "\nBalance: $" + accountBalance;
+        return "Account Type: " + accountType + "\nBalance: $" + String.format("%.2f", accountBalance);
     }
 }

@@ -20,7 +20,7 @@ public class UserController {
 
     // Sign up new users.
     public User createUser() {
-        //TODO: Make sure number aren't re-used
+        //TODO: Make sure id numbers aren't re-used. Use sql auto increment instead??
         Random rand = new Random();
         int userId = rand.nextInt(999999 - 100001) + 100000;
 
