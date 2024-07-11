@@ -2,9 +2,11 @@ package com.revature.bankingapp;
 
 import com.revature.bankingapp.Account.Account;
 import com.revature.bankingapp.Account.AccountController;
+import com.revature.bankingapp.Account.AccountRepository;
 import com.revature.bankingapp.Account.AccountService;
 import com.revature.bankingapp.User.User;
 import com.revature.bankingapp.User.UserController;
+import com.revature.bankingapp.User.UserRepository;
 import com.revature.bankingapp.User.UserService;
 import com.revature.bankingapp.util.ScannerValidator;
 import com.revature.bankingapp.util.auth.AuthController;
@@ -40,7 +42,7 @@ public class BankingApplication {
         Scanner scanner = new Scanner(System.in);
 
         User user;
-        UserService userService = new UserService();
+        UserService userService = new UserService(new UserRepository());
         UserController userController = new UserController(scanner, userService);
         AuthController authController = new AuthController(scanner, new AuthService(userService));
 
@@ -91,7 +93,8 @@ public class BankingApplication {
      */
     private static void accessAccount(Scanner scanner, User user, UserController userController) {
         int opt = 0;
-        AccountController accountController = new AccountController(scanner, new AccountService());
+        AccountRepository accountRepository = new AccountRepository();
+        AccountController accountController = new AccountController(scanner, new AccountService(accountRepository));
         Account account = accountController.getAccountById(user.getUserId());
 
         if (account == null) {

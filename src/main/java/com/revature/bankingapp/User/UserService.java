@@ -1,6 +1,9 @@
 package com.revature.bankingapp.User;
 
+import com.revature.bankingapp.Account.Account;
+import com.revature.bankingapp.Account.AccountRepository;
 import com.revature.bankingapp.util.exceptions.InvalidInputException;
+import com.revature.bankingapp.util.interfaces.Serviceable;
 
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -8,9 +11,26 @@ import java.util.regex.Pattern;
 /**
  *
  */
-public class UserService {
+public class UserService implements Serviceable<User> {
     // Return true if string is empty or null
     private Predicate<String> isNotEmpty = str -> str != null && !str.isBlank();
+    private UserRepository userRepository;
+
+
+    public UserService(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
+
+    @Override
+    public User create(User user) throws InvalidInputException {
+        validateUserInfo(user);
+        return userRepository.create(user);
+    }
+
+    @Override
+    public User findById(int userId) {
+        return userRepository.findById(userId);
+    }
 
     /**
      * Ensures all information is given (and valid) when creating a new user
@@ -18,7 +38,7 @@ public class UserService {
      * @param user the user currently using this application
      * @throws InvalidInputException exception thrown when there is invalid information
      */
-    public void validateMinInfo(User user) throws InvalidInputException {
+    public void validateUserInfo(User user) throws InvalidInputException {
         String emailPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
                 + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
         String passwordPattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$";

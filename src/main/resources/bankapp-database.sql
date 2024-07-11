@@ -14,7 +14,7 @@ create table users (
 create type account_enum as enum ('CHECKING', 'SAVINGS');
 
 create table accounts(
-	user_id         integer references users(user_id),
+	user_id         integer references users(user_id) on delete cascade,
 	account_type    account_enum not null,
 	account_balance numeric not null check(account_balance >= 0)
 );

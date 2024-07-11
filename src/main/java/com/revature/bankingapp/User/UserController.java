@@ -41,7 +41,8 @@ public class UserController {
 
         try {
             User newUser = new User(firstName, lastName, email, password, userId);
-            userService.validateMinInfo(newUser);
+            userService.validateUserInfo(newUser);
+
         } catch (InvalidInputException e) {
             System.out.println(e.getMessage());
         }

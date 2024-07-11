@@ -12,6 +12,8 @@ public class Account {
         SAVINGS
     };
 
+    public Account() {}
+
     /**
      * Constructor
      *

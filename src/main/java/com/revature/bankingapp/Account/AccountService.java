@@ -1,16 +1,27 @@
 package com.revature.bankingapp.Account;
 
 import com.revature.bankingapp.util.exceptions.InvalidInputException;
+import com.revature.bankingapp.util.interfaces.Serviceable;
 
-public class AccountService {
+public class AccountService  implements Serviceable<Account> {
+    private AccountRepository accountRepository;
 
-    //TODO: Access database to find user account info
-    /*
-    public Account findById(int id) {
 
-        return new Account();
+    public AccountService(AccountRepository accountRepository){
+        this.accountRepository = accountRepository;
     }
-     */
+
+    @Override
+    public Account create(Account account) throws InvalidInputException {
+        validateAccountInfo(account);
+        return accountRepository.create(account);
+    }
+
+    @Override
+    public Account findById(int userId) {
+        return accountRepository.findById(userId);
+    }
+
 
     public void validateAccountInfo(Account account) throws InvalidInputException {
         if (account == null)
@@ -24,5 +35,6 @@ public class AccountService {
         if (account.getAccountType() == null)
             throw new InvalidInputException("Account type should not be null");
     }
+
 
 }

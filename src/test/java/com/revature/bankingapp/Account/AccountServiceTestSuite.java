@@ -9,10 +9,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AccountServiceTestSuite {
     private AccountService accServ;
+    private AccountRepository accountRepository;
 
     @BeforeEach
     public void setup() {
-        accServ = new AccountService();
+        accServ = new AccountService(accountRepository);
     }
 
     @Test
