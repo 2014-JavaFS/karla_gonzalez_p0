@@ -18,7 +18,7 @@ public class AccountServiceTestSuite {
 
     @Test
     public void validateAccountInfo_MinBalance() throws InvalidInputException {
-        Account account = new Account(Account.AccountType.CHECKING, 123123, -78.54);
+        Account account = new Account(123123, Account.AccountType.CHECKING, -78.54);
 
         InvalidInputException e = assertThrows(InvalidInputException.class, () -> accServ.validateAccountInfo(account));
         assertEquals("Balance cannot be less than zero", e.getMessage());

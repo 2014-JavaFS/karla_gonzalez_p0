@@ -65,6 +65,6 @@ public class UserService implements Serviceable<User> {
     public User findByEmailAndPassword(String email, String password) {
         //TODO: Use database to implement this method
 
-        return null;
+        return userRepository.findByEmailAndPassword(email, password);
     }
 }

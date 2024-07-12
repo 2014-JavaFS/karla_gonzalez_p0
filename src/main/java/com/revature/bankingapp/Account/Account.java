@@ -4,23 +4,27 @@ public class Account {
     private int userId;
     private AccountType accountType;
     private double accountBalance;
+
     public enum AccountType {
         CHECKING,
         SAVINGS
     };
 
+    /**
+     * Default constructor used for instantiation
+     */
     public Account() {}
 
     /**
-     * Constructor
+     * Constructor used for initialization
      *
      * @param accountType       the type of account to be created, can be CHECKING or SAVINGS
      * @param userId            the id of the user associated with this account
      * @param accountBalance    the amount of money currently in the account
      */
-    public Account(AccountType accountType, int userId, double accountBalance) {
-        this.accountType = accountType;
+    public Account(int userId, AccountType accountType, double accountBalance) {
         this.userId = userId;
+        this.accountType = accountType;
         this.accountBalance = accountBalance;
     }
 

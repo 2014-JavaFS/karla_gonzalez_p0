@@ -1,6 +1,5 @@
 package com.revature.bankingapp.User;
 
-import com.revature.bankingapp.Account.Account;
 import com.revature.bankingapp.util.ConnectionFactory;
 import com.revature.bankingapp.util.exceptions.InvalidInputException;
 import com.revature.bankingapp.util.interfaces.Crudable;
@@ -90,5 +89,31 @@ public class UserRepository implements Crudable<User> {
         user.setPassword(rs.getString("password"));
 
         return user;
+    }
+
+    public User findByEmailAndPassword(String email, String password) {
+
+        try(Connection con = ConnectionFactory.getConnectionFactory().getConnection()) {
+            String sql = "select * from users where email = ? and password = ?;";
+
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, email);
+            ps.setString(2, password);
+
+            ResultSet rs = ps.executeQuery();
+
+            User user = new User();
+
+            user.setUserId(rs.getInt("user_id"));
+            user.setFirstName(rs.getString("first_name"));
+            user.setLastName(rs.getString("last_name"));
+            user.setEmail(rs.getString("email"));
+
+            return user;
+
+        } catch(SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

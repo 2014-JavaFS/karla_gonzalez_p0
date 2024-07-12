@@ -1,23 +1,42 @@
 package com.revature.bankingapp.util.auth;
 
 import com.revature.bankingapp.User.User;
+import com.revature.bankingapp.util.interfaces.Controller;
+import io.javalin.Javalin;
+import io.javalin.http.Context;
+import io.javalin.http.HttpStatus;
 
 import javax.security.sasl.AuthenticationException;
 import java.util.Scanner;
 
-public class AuthController {
-    private final Scanner scanner;
+public class AuthController implements Controller {
     private final AuthService authService;
 
     /**
      * Constructor requiring dependencies. Instantiation will only happen when these dependencies are included.
      *
-     * @param scanner       used for user input
      * @param authService   used for validating that input
      */
-    public AuthController(Scanner scanner, AuthService authService) {
-        this.scanner = scanner;
+    public AuthController(AuthService authService) {
         this.authService = authService;
+    }
+
+    @Override
+    public void registerPaths(Javalin app) {
+        app.post("/login", this::postLogin);
+    }
+
+    private void postLogin(Context ctx) {
+        String email = ctx.queryParam("email");
+        String password = ctx.queryParam("password");
+
+        try {
+            User user = authService.login(email, password);
+            ctx.header("userId", String.valueOf(user.getUserId()));
+            ctx.status(HttpStatus.ACCEPTED);
+        } catch (AuthenticationException e) {
+            ctx.status(HttpStatus.UNAUTHORIZED);
+        }
     }
 
     /**
@@ -27,18 +46,4 @@ public class AuthController {
      *
      * @return logged in user or null
      */
-    public User logIn() {
-        try {
-            System.out.print("Enter your email: ");
-            String email = scanner.next();
-
-            System.out.print("Enter your password: ");
-            String password = scanner.next();
-
-            return authService.login(email, password);
-        } catch (AuthenticationException e) {
-            System.out.println(e.getMessage());
-            return null;
-        }
-    }
 }

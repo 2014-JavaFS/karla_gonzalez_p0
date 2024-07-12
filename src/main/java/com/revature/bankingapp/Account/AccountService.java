@@ -12,14 +12,17 @@ public class AccountService  implements Serviceable<Account> {
     }
 
     @Override
-    public Account create(Account account) throws InvalidInputException {
-        validateAccountInfo(account);
+    public Account create(Account account) {
         return accountRepository.create(account);
     }
 
     @Override
     public Account findById(int userId) {
         return accountRepository.findById(userId);
+    }
+
+    public boolean updateBalance(Account account) {
+        return accountRepository.updateAccountBalance(account);
     }
 
     public void validateAccountInfo(Account account) throws InvalidInputException {

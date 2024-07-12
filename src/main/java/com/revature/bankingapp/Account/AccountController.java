@@ -1,44 +1,19 @@
 package com.revature.bankingapp.Account;
 
-import com.revature.bankingapp.util.ScannerValidator;
-import java.util.Scanner;
+import com.revature.bankingapp.util.interfaces.Controller;
+import io.javalin.Javalin;
+import io.javalin.http.Context;
+import io.javalin.http.HttpStatus;
 
-public class AccountController {
-    public Scanner scanner;
+public class AccountController implements Controller {
     private AccountService accountService;
-
-    /**
-     * Input validation methods which ensures the user enters a numerical value wherever a number is required.
-     * If the user inputs anything that isn't a number, an error message is displayed
-     *
-     * returns true if the user inputs a number, otherwise it returns false.
-     */
-    ScannerValidator anyInt = (scanner, errorMsg) -> {
-        if(!scanner.hasNextInt()) {
-            System.out.println(errorMsg);
-            scanner.next();
-            return false;
-        }
-        return true;
-    };
-
-    ScannerValidator anyDouble = (scanner, errorMsg) -> {
-        if(!scanner.hasNextDouble()) {
-            System.out.println(errorMsg);
-            scanner.next();
-            return false;
-        }
-        return true;
-    };
 
     /**
      * Constructor that requires dependencies to create an instance of this class
      *
-     * @param scanner           used for accepting user input
      * @param accountService    used for validating that input
      */
-    public AccountController(Scanner scanner, AccountService accountService) {
-        this.scanner = scanner;
+    public AccountController(AccountService accountService) {
         this.accountService = accountService;
     }
 
@@ -49,33 +24,7 @@ public class AccountController {
      * @return  the newly created account
      */
     public Account createAccount(int userId) {
-        int opt;
-        boolean accountCreated = false;
-        Account.AccountType accountType = null;
-
-        do {
-            System.out.println("Select account type");
-            System.out.println("1. Checking\n2. Savings");
-
-            if(anyInt.isValid(scanner, "\nInvalid data type, please enter either 1 or 2")) {
-                opt = scanner.nextInt();
-
-                switch (opt) {
-                    case 1:
-                        accountType = Account.AccountType.valueOf("CHECKING");
-                        accountCreated = true;
-                        break;
-                    case 2:
-                        accountType = Account.AccountType.valueOf("SAVINGS");
-                        accountCreated = true;
-                        break;
-                    default:
-                        System.out.println("Please enter either 1 or 2");
-                }
-            }
-        } while (!accountCreated);
-
-        return new Account(accountType, userId, 0.0);
+        return null;
     }
 
     /**
@@ -84,36 +33,7 @@ public class AccountController {
      * @param account the account to add money to
      */
     public void deposit(Account account) {
-        double amt = 0.0;
-        boolean validAmt = false;
 
-        System.out.println();
-
-        do {
-            System.out.print("Enter amount to deposit or -1 to cancel: $");
-
-            if(anyDouble.isValid(scanner, "\nInvalid data type, please enter a dollar amount")) {
-                amt = scanner.nextDouble();
-
-                if (amt == -1)
-                    break;
-                if (amt <= 0) {
-                    System.out.println("\nAmount should be greater than zero");
-                    continue;
-                }
-                if (amt > 10000) {
-                    System.out.println("\nDeposit limit is $10,000");
-                    continue;
-                }
-
-                validAmt = true;
-            }
-        } while (!validAmt);
-
-        if (validAmt) {
-            amt += account.getAccountBalance();
-            account.setAccountBalance(amt);
-        }
     }
 
     /**
@@ -122,37 +42,7 @@ public class AccountController {
      * @param account the account to withdraw from
      */
     public void withdraw(Account account) {
-        double amt = 0.0;
-        double currentBalance = account.getAccountBalance();
-        boolean validAmt = false;
 
-        System.out.println();
-
-        do {
-            System.out.print("Enter amount to withdraw or '-1' to cancel: $");
-
-            if(anyDouble.isValid(scanner, "\nInvalid data type, please enter a dollar amount")) {
-                amt = scanner.nextDouble();
-
-                if (amt == -1)
-                    break;
-                if (amt <= 0) {
-                    System.out.println("\nAmount should be greater than zero");
-                    continue;
-                }
-                if (amt > currentBalance) {
-                    System.out.println("\nCannot withdraw more than your current account balance");
-                    continue;
-                }
-
-                validAmt = true;
-            }
-        } while (!validAmt);
-
-        if (validAmt) {
-            currentBalance -= amt;
-            account.setAccountBalance(currentBalance);
-        }
     }
 
     /**
@@ -172,5 +62,35 @@ public class AccountController {
      */
     public Account getAccountById(int userId) {
         return accountService.findById(userId);
+    }
+
+    //TODO: Gets all accounts, change to only get specific user account
+    @Override
+    public void registerPaths(Javalin app) {
+        app.post("/account", this::postNewAccount);
+        app.get("account/{userId}", this::getAccountById);
+    }
+
+    private void getAccountById(Context ctx) {
+        int userId = Integer.parseInt(ctx.pathParam("userId"));
+        Account account = accountService.findById(userId);
+
+        ctx.json(account);
+    }
+
+    public void postNewAccount(Context ctx){
+        Account account = ctx.bodyAsClass(Account.class);
+        ctx.json(accountService.create(account));
+        ctx.status(HttpStatus.CREATED);
+    }
+
+    private void putUpdateBalance(Context ctx) {
+        Account account = ctx.bodyAsClass(Account.class);
+
+        if(accountService.updateBalance(account))
+            ctx.status(HttpStatus.ACCEPTED);
+        else
+            ctx.status(HttpStatus.BAD_REQUEST);
+
     }
 }
