@@ -25,11 +25,9 @@ public class AuthController {
      * to attempt to log the user into the application. If the credentials do not match those in the database an
      * AuthenticationException is thrown
      *
-     * @return logged in user
+     * @return logged in user or null
      */
     public User logIn() {
-        User user = null;
-
         try {
             System.out.print("Enter your email: ");
             String email = scanner.next();
@@ -40,8 +38,7 @@ public class AuthController {
             return authService.login(email, password);
         } catch (AuthenticationException e) {
             System.out.println(e.getMessage());
+            return null;
         }
-
-        return user;
     }
 }

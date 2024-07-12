@@ -85,4 +85,21 @@ public class AccountRepository implements Crudable<Account> {
 
         return account;
     }
+
+    public boolean updateAccountBalance(int userId, double newBalance) {
+        try (Connection con = ConnectionFactory.getConnectionFactory().getConnection()) {
+            String sql = "update accounts set account_balance = ? where user_id = ?;";
+
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setDouble(1, newBalance);
+            ps.setInt(2, userId);
+
+            if (ps.executeUpdate() == 0)
+                throw new RuntimeException("Account could not be inserted into the database");
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

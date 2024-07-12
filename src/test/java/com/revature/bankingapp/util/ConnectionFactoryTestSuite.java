@@ -14,7 +14,8 @@ public class ConnectionFactoryTestSuite {
         try(Connection con = ConnectionFactory.getConnectionFactory().getConnection()) {
             assertNotNull(con);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
+
 }

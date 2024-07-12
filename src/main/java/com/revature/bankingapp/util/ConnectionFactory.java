@@ -11,7 +11,6 @@ public class ConnectionFactory {
     private static ConnectionFactory connectionFactory = new ConnectionFactory();
     private Properties properties = new Properties();
 
-
     /**
      * Private constructor, only executable within this class
      */

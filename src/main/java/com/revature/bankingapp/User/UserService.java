@@ -1,18 +1,12 @@
 package com.revature.bankingapp.User;
 
-import com.revature.bankingapp.Account.Account;
-import com.revature.bankingapp.Account.AccountRepository;
 import com.revature.bankingapp.util.exceptions.InvalidInputException;
 import com.revature.bankingapp.util.interfaces.Serviceable;
 
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-/**
- *
- */
 public class UserService implements Serviceable<User> {
-    // Return true if string is empty or null
     private Predicate<String> isNotEmpty = str -> str != null && !str.isBlank();
     private UserRepository userRepository;
 
@@ -71,7 +65,6 @@ public class UserService implements Serviceable<User> {
     public User findByEmailAndPassword(String email, String password) {
         //TODO: Use database to implement this method
 
-        // return user if email and password match, else return null
         return null;
     }
 }

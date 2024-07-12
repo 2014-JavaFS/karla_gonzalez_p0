@@ -1,8 +1,6 @@
 package com.revature.bankingapp.Account;
 
-import com.revature.bankingapp.User.User;
 import com.revature.bankingapp.util.ScannerValidator;
-
 import java.util.Scanner;
 
 public class AccountController {
@@ -10,8 +8,8 @@ public class AccountController {
     private AccountService accountService;
 
     /**
-     * An input validation method which ensures the user enters a numerical value wherever an integer is required.
-     * If the user input anything that isn't an integer, an error message is displayed
+     * Input validation methods which ensures the user enters a numerical value wherever a number is required.
+     * If the user inputs anything that isn't a number, an error message is displayed
      *
      * returns true if the user inputs a number, otherwise it returns false.
      */
@@ -24,12 +22,6 @@ public class AccountController {
         return true;
     };
 
-    /**
-     * An input validation method which ensures the user enters a numerical value wherever a double is required.
-     * If the user inputs anything that isn't a double, an error message is displayed.
-     *
-     * Returns true if the user inputs a number, otherwise it returns false.
-     */
     ScannerValidator anyDouble = (scanner, errorMsg) -> {
         if(!scanner.hasNextDouble()) {
             System.out.println(errorMsg);
@@ -40,7 +32,7 @@ public class AccountController {
     };
 
     /**
-     * constructor that requires dependencies to create an instance of this class
+     * Constructor that requires dependencies to create an instance of this class
      *
      * @param scanner           used for accepting user input
      * @param accountService    used for validating that input
@@ -53,10 +45,10 @@ public class AccountController {
     /**
      * Creates a new checking or savings account
      *
-     * @param   user the user associated with the new account
+     * @param   userId the id of the user associated with the new account
      * @return  the newly created account
      */
-    public Account createAccount(User user) {
+    public Account createAccount(int userId) {
         int opt;
         boolean accountCreated = false;
         Account.AccountType accountType = null;
@@ -83,7 +75,7 @@ public class AccountController {
             }
         } while (!accountCreated);
 
-        return new Account(accountType, user.getUserId(), 0.0);
+        return new Account(accountType, userId, 0.0);
     }
 
     /**
@@ -169,14 +161,16 @@ public class AccountController {
      * @param account the account information to print out
      */
     public void viewBalance(Account account) {
-            System.out.println(account.toString());
+        System.out.println(account.toString());
     }
 
+    /**
+     * Retrieve the account associated with the current user using their id
+     *
+     * @param userId id of the current user
+     * @return account associated with user
+     */
     public Account getAccountById(int userId) {
-        Account account = null;
-
-        //TODO: Find user account in database using the user id
-
-        return account;
+        return accountService.findById(userId);
     }
 }

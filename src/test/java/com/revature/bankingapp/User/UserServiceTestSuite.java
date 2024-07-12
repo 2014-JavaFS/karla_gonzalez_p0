@@ -55,4 +55,5 @@ public class UserServiceTestSuite {
         InvalidInputException e = assertThrows(InvalidInputException.class, () -> uServ.validateUserInfo(user));
         assertEquals("Password doesn't fit security criteria", e.getMessage());
     }
+
 }

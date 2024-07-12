@@ -11,7 +11,6 @@ import com.revature.bankingapp.User.UserService;
 import com.revature.bankingapp.util.ScannerValidator;
 import com.revature.bankingapp.util.auth.AuthController;
 import com.revature.bankingapp.util.auth.AuthService;
-
 import java.util.Scanner;
 
 public class BankingApplication {
@@ -99,7 +98,7 @@ public class BankingApplication {
 
         if (account == null) {
             System.out.println("\nCreate a Savings or Checking account to continue");
-            account = accountController.createAccount(user);
+            account = accountController.createAccount(user.getUserId());
         }
 
         do {
@@ -138,7 +137,7 @@ public class BankingApplication {
                         break;
 
                     case 4:
-                        System.out.println("Exiting Application.");
+                        System.out.println("Exiting Application");
                         break;
 
                     default:

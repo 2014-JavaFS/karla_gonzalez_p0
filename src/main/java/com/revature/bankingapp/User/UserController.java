@@ -25,18 +25,18 @@ public class UserController {
 
         scanner = new Scanner(System.in);
 
-        System.out.println("Please enter your first name: ");
+        System.out.print("Please enter your first name: ");
         String firstName = scanner.next();
         firstName = firstName.substring(0, 1).toUpperCase() + firstName.substring(1);
 
-        System.out.println("Please enter your last name: ");
+        System.out.print("Please enter your last name: ");
         String lastName = scanner.next();
         lastName = lastName.substring(0, 1).toUpperCase() + lastName.substring(1);
 
-        System.out.println("Please enter your email address: ");
+        System.out.print("Please enter your email address: ");
         String email = scanner.next();
 
-        System.out.println("Enter a password: ");
+        System.out.print("Enter a password: ");
         String password = scanner.next();
 
         try {
