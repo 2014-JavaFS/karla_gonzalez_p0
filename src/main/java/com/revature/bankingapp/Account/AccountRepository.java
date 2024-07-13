@@ -100,6 +100,7 @@ public class AccountRepository implements Crudable<Account> {
 
             if (ps.executeUpdate() == 0)
                 throw new RuntimeException("Account could not be inserted into the database");
+
             return true;
         } catch (SQLException e) {
             e.printStackTrace();

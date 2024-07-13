@@ -120,7 +120,8 @@ public class AccountController {
 
         if (validAmt) {
             amt += account.getAccountBalance();
-            account.setAccountBalance(amt);
+            if (accountService.updateAccountBalance(account.getUserId(), amt))
+                account.setAccountBalance(amt);
         }
     }
 
@@ -131,7 +132,7 @@ public class AccountController {
      */
     public void withdraw(Account account) {
         double amt = 0.0;
-        double currentBalance = account.getAccountBalance();
+        double balance = account.getAccountBalance();
         boolean validAmt = false;
 
         System.out.println();
@@ -148,7 +149,7 @@ public class AccountController {
                     System.out.println("\nAmount should be greater than zero");
                     continue;
                 }
-                if (amt > currentBalance) {
+                if (amt > balance) {
                     System.out.println("\nCannot withdraw more than your current account balance");
                     continue;
                 }
@@ -158,8 +159,9 @@ public class AccountController {
         } while (!validAmt);
 
         if (validAmt) {
-            currentBalance -= amt;
-            account.setAccountBalance(currentBalance);
+            balance -= amt;
+            if (accountService.updateAccountBalance(account.getUserId(), balance))
+                account.setAccountBalance(balance);
         }
     }
 

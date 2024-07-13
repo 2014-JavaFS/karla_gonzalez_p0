@@ -58,7 +58,7 @@ public class BankingApplication {
                 opt = scanner.nextInt();
 
                 switch (opt) {
-                    case 1://TODO: Make sure this works with database (It doesn't :( )
+                    case 1:
                         System.out.println("\nLogging In");
                         user = authController.login();
 
@@ -117,18 +117,18 @@ public class BankingApplication {
                 System.out.println();
 
                 switch (opt) {
-                    case 1: //TODO: Make sure this reflects what's in the database
+                    case 1:
                         System.out.println("Viewing Account Information");
                         userController.viewUserInfo(user);
                         accountController.viewBalance(account);
                         break;
 
-                    case 2: //TODO: Make sure this works with database
+                    case 2:
                         System.out.println("Making a Deposit");
                         accountController.deposit(account);
                         break;
 
-                    case 3: //TODO: Make sure this works with database
+                    case 3:
                         if (account.getAccountBalance() <= 0) {
                             System.out.println("Insufficient funds. Unable to make a withdrawal at this time");
                             break;

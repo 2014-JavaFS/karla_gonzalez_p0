@@ -22,6 +22,10 @@ public class AccountService  implements Serviceable<Account> {
         return accountRepository.findById(userId);
     }
 
+    public boolean updateAccountBalance(int userId, double newBalance) {
+        return accountRepository.updateAccountBalance(userId, newBalance);
+    }
+
     public void validateAccountInfo(Account account) throws InvalidInputException {
         if (account == null)
             throw new InvalidInputException("Account is null as it has not been instantiated in memory");
