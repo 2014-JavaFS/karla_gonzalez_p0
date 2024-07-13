@@ -11,6 +11,8 @@ import com.revature.bankingapp.User.UserService;
 import com.revature.bankingapp.util.ScannerValidator;
 import com.revature.bankingapp.util.auth.AuthController;
 import com.revature.bankingapp.util.auth.AuthService;
+import com.revature.bankingapp.util.exceptions.DataNotFoundException;
+
 import java.util.Scanner;
 
 public class BankingApplication {
@@ -43,6 +45,7 @@ public class BankingApplication {
         User user;
         UserService userService = new UserService(new UserRepository());
         UserController userController = new UserController(scanner, userService);
+        AccountController accountController = new AccountController(scanner, new AccountService(new AccountRepository()));
         AuthController authController = new AuthController(scanner, new AuthService(userService));
 
         System.out.println("Welcome to this bank app (Name TBD)");
@@ -67,8 +70,12 @@ public class BankingApplication {
                         System.out.println("\nSigning Up");
                         user = userController.createUser();
 
-                        if (user != null)
+                        if (user != null) {
+                            System.out.println("\nCreate a Savings or Checking account to continue");
+                            accountController.createAccount(user.getUserId());
                             accessAccount(scanner, user, userController);
+                        }
+
                         break;
 
                     case 3:
@@ -95,11 +102,6 @@ public class BankingApplication {
         AccountRepository accountRepository = new AccountRepository();
         AccountController accountController = new AccountController(scanner, new AccountService(accountRepository));
         Account account = accountController.getAccountById(user.getUserId());
-
-        if (account == null) {
-            System.out.println("\nCreate a Savings or Checking account to continue");
-            account = accountController.createAccount(user.getUserId());
-        }
 
         do {
             System.out.println("\nWelcome " + user.getFirstName());

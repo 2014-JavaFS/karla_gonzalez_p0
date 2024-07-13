@@ -1,6 +1,7 @@
 package com.revature.bankingapp.Account;
 
 import com.revature.bankingapp.util.ConnectionFactory;
+import com.revature.bankingapp.util.exceptions.DataNotFoundException;
 import com.revature.bankingapp.util.interfaces.Crudable;
 
 import java.sql.Connection;
@@ -44,7 +45,7 @@ public class AccountRepository implements Crudable<Account> {
             PreparedStatement ps = con.prepareStatement(sql);
 
             ps.setInt(1, newAccount.getUserId());
-            //ps.setString(2, (newAccount.getAccountType())); //TODO: set to type enum
+            ps.setString(2, String.valueOf(newAccount.getAccountType()));
             ps.setDouble(3, newAccount.getAccountBalance());
 
             if(ps.executeUpdate() == 0)
@@ -60,14 +61,17 @@ public class AccountRepository implements Crudable<Account> {
 
     @Override
     public Account findById(int userId) {
-
         try(Connection con = ConnectionFactory.getConnectionFactory().getConnection()) {
             String sql = "select * from accounts where user_id = ?;";
 
             PreparedStatement ps = con.prepareStatement(sql);
+
             ps.setInt(1, userId);
 
             ResultSet rs = ps.executeQuery();
+
+            if(!rs.next())
+                throw new DataNotFoundException("No account under that id.....");
 
             return generateAccountFromResultSet(rs);
         } catch(SQLException e) {
@@ -80,7 +84,7 @@ public class AccountRepository implements Crudable<Account> {
         Account account = new Account();
 
         account.setUserId(rs.getInt("user_id"));
-        //account.setAccountType(rs.getString("account_type")); //TODO: Figure out how to get enum
+        account.setAccountType(Account.AccountType.valueOf(rs.getString("account_type")));
         account.setAccountBalance(rs.getDouble("account_balance"));
 
         return account;

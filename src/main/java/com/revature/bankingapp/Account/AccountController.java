@@ -1,6 +1,8 @@
 package com.revature.bankingapp.Account;
 
 import com.revature.bankingapp.util.ScannerValidator;
+import com.revature.bankingapp.util.exceptions.InvalidInputException;
+
 import java.util.Scanner;
 
 public class AccountController {
@@ -48,7 +50,7 @@ public class AccountController {
      * @param   userId the id of the user associated with the new account
      * @return  the newly created account
      */
-    public Account createAccount(int userId) {
+    public void createAccount(int userId) {
         int opt;
         boolean accountCreated = false;
         Account.AccountType accountType = null;
@@ -75,7 +77,13 @@ public class AccountController {
             }
         } while (!accountCreated);
 
-        return new Account(accountType, userId, 0.0);
+        Account account = new Account(accountType, userId, 0.0);
+
+        try {
+            accountService.create(account);
+        } catch (InvalidInputException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

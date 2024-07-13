@@ -41,13 +41,14 @@ public class UserController {
 
         try {
             User newUser = new User(firstName, lastName, email, password, userId);
-            userService.validateUserInfo(newUser);
+            userService.create(newUser);
+
+            return newUser;
 
         } catch (InvalidInputException e) {
             System.out.println(e.getMessage());
+            return null;
         }
-
-        return new User(firstName, lastName, email, password, userId);
     }
 
     /**

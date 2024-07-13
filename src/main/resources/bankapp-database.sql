@@ -11,11 +11,12 @@ create table users (
 	password    varchar(60) not null    --TODO: Encrypt via API later
 );
 
-create type account_enum as enum ('CHECKING', 'SAVINGS');
+--TODO: Figure out how to pass enum to sql query using preparedStatement
+--create type account_enum as enum ('CHECKING', 'SAVINGS');
 
 create table accounts(
 	user_id         integer references users(user_id) on delete cascade,
-	account_type    account_enum not null,
+	account_type    varchar(10) not null,
 	account_balance numeric not null check(account_balance >= 0)
 );
 
