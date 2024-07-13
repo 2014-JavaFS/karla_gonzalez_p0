@@ -2,6 +2,7 @@ package com.revature.bankingapp.util.auth;
 
 import com.revature.bankingapp.User.User;
 import com.revature.bankingapp.User.UserService;
+import com.revature.bankingapp.util.exceptions.InvalidInputException;
 
 import javax.security.sasl.AuthenticationException;
 
@@ -25,8 +26,7 @@ public class AuthService {
      * @return          user found with the given credentials
      * @throws AuthenticationException if credentials do not match those in the database
      */
-    //TODO: Get working with database
-    public User login(String email, String password) throws AuthenticationException {
+    public User login(String email, String password) throws AuthenticationException, InvalidInputException {
         User user = userService.findByEmailAndPassword(email,password);
 
         if (user == null)

@@ -1,6 +1,7 @@
 package com.revature.bankingapp.util.auth;
 
 import com.revature.bankingapp.User.User;
+import com.revature.bankingapp.util.exceptions.InvalidInputException;
 
 import javax.security.sasl.AuthenticationException;
 import java.util.Scanner;
@@ -27,7 +28,7 @@ public class AuthController {
      *
      * @return logged in user or null
      */
-    public User logIn() {
+    public User login() {
         try {
             System.out.print("Enter your email: ");
             String email = scanner.next();
@@ -36,7 +37,7 @@ public class AuthController {
             String password = scanner.next();
 
             return authService.login(email, password);
-        } catch (AuthenticationException e) {
+        } catch (AuthenticationException | InvalidInputException e) {
             System.out.println(e.getMessage());
             return null;
         }

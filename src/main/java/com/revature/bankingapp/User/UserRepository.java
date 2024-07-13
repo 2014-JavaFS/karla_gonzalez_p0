@@ -2,6 +2,7 @@ package com.revature.bankingapp.User;
 
 import com.revature.bankingapp.Account.Account;
 import com.revature.bankingapp.util.ConnectionFactory;
+import com.revature.bankingapp.util.exceptions.DataNotFoundException;
 import com.revature.bankingapp.util.exceptions.InvalidInputException;
 import com.revature.bankingapp.util.interfaces.Crudable;
 
@@ -74,6 +75,26 @@ public class UserRepository implements Crudable<User> {
 
             return generateUserFromResultSet(rs);
 
+        } catch(SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public User findByEmailAndPassword(String email, String password) {
+        try(Connection con = ConnectionFactory.getConnectionFactory().getConnection()) {
+            String sql = "select * from users where email = ? and password = ?;";
+
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, email);
+            ps.setString(2, password);
+
+            ResultSet rs = ps.executeQuery();
+
+            if(!rs.next())
+                throw new DataNotFoundException("No account under those credentials.....");
+
+            return generateUserFromResultSet(rs);
         } catch(SQLException e) {
             e.printStackTrace();
             return null;

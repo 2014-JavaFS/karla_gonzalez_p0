@@ -62,9 +62,10 @@ public class UserService implements Serviceable<User> {
             throw new InvalidInputException("Password doesn't fit security criteria");
     }
 
-    public User findByEmailAndPassword(String email, String password) {
-        //TODO: Use database to implement this method
+    public User findByEmailAndPassword(String email, String password) throws InvalidInputException {
+        if(!isNotEmpty.test(email) || !isNotEmpty.test(password))
+            throw new InvalidInputException("One or more fields were left empty.");
 
-        return null;
+        return userRepository.findByEmailAndPassword(email, password);
     }
 }
