@@ -22,6 +22,10 @@ public class AccountService  implements Serviceable<Account> {
         return accountRepository.findById(userId);
     }
 
+    public boolean delete(int userId) {
+        return accountRepository.delete(userId);
+    }
+
     public boolean updateAccountBalance(int userId, double newBalance) {
         return accountRepository.updateAccountBalance(userId, newBalance);
     }
