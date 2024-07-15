@@ -3,22 +3,64 @@ package com.revature.bankingapp.User;
 import com.revature.bankingapp.util.exceptions.InvalidInputException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 public class UserServiceTestSuite {
+    //@Mock
+    private UserRepository mockUserRepository;
+    //@InjectMocks
     private UserService uServ;
-    private UserRepository userRepository;
 
     @BeforeEach
     public void setup() {
-        uServ = new UserService(userRepository);
+        mockUserRepository = mock(UserRepository.class);
+        uServ = new UserService(mockUserRepository);
+    }
+
+    @Test
+    public void create_Successful() throws InvalidInputException {
+        User validUser = new User(100010, "John", "Doe", "jdoe2@email.net", "R3v@2tur");
+        when(mockUserRepository.create(validUser)).thenReturn(validUser);
+
+        User returnedUser = uServ.create(validUser);
+
+        assertEquals(validUser, returnedUser);
+        verify(mockUserRepository, times(1)).create(validUser);
+    }
+
+    @Test
+    public void findById_Successful() {
+        User validUser = new User(123123, "John", "Doe", "jdoe2@email.net", "R3v@2tur");
+        int validUserId = 123123;
+        when(mockUserRepository.findById(validUserId)).thenReturn(validUser);
+
+        User returnedUser = uServ.findById(validUserId);
+
+        assertEquals(validUser, returnedUser);
+        verify(mockUserRepository, times(1)).findById(validUserId);
+    }
+
+    @Test
+    public void findByEmailAndPassword_Successful() throws InvalidInputException {
+        User validUser = new User(123123, "John", "Doe", "jdoe2@email.net", "R3v@2tur");
+        String validUserEmail = "jdoe2@email.net";
+        String validUserPassword = "R3v@2tur";
+        when(mockUserRepository.findByEmailAndPassword(validUserEmail, validUserPassword)).thenReturn(validUser);
+
+        User returnedUser = uServ.findByEmailAndPassword(validUserEmail, validUserPassword);
+
+        assertEquals(validUser, returnedUser);
+        verify(mockUserRepository, times(1)).findByEmailAndPassword(validUserEmail, validUserPassword);
     }
 
     @Test
     public void validateMinInfo_FieldLeftBlank() throws InvalidInputException {
-        User user = new User("John", "Doe", "", "R3vat$u2", 100000);
+        User user = new User(100000, "John", "Doe", "", "R3vat$u2");
 
         InvalidInputException e = assertThrows(InvalidInputException.class, () -> uServ.validateUserInfo(user));
         assertEquals("One or more values are empty", e.getMessage());
@@ -26,7 +68,7 @@ public class UserServiceTestSuite {
 
     @Test
     public void validateMinInfo_UserIdTooLong() throws InvalidInputException {
-        User user = new User("John", "Doe", "jDoe@email.net", "R3vat$u2", 1000010);
+        User user = new User(1000010, "John", "Doe", "jDoe@email.net", "R3vat$u2");
 
         InvalidInputException e = assertThrows(InvalidInputException.class, () -> uServ.validateUserInfo(user));
         assertEquals("User Id should be exactly 6 digits long", e.getMessage());
@@ -34,7 +76,7 @@ public class UserServiceTestSuite {
 
     @Test
     public void validateMinInfo_UserIdTooShort() throws InvalidInputException {
-        User user = new User("John", "Doe", "jDoe@email.net", "R3vat$u2", 1000);
+        User user = new User(1000, "John", "Doe", "jDoe@email.net", "R3vat$u2");
 
         InvalidInputException e = assertThrows(InvalidInputException.class, () -> uServ.validateUserInfo(user));
         assertEquals("User Id should be exactly 6 digits long", e.getMessage());
@@ -42,7 +84,7 @@ public class UserServiceTestSuite {
 
     @Test
     public void validateMinInfo_InvalidEmailFormat() throws InvalidInputException {
-        User user = new User("John", "Doe", "jDoeemail@net", "R3vat$u2", 100000);
+        User user = new User(100000, "John", "Doe", "jDoeemail@net", "R3vat$u2");
 
         InvalidInputException e = assertThrows(InvalidInputException.class, () -> uServ.validateUserInfo(user));
         assertEquals("Invalid email address", e.getMessage());
@@ -50,10 +92,9 @@ public class UserServiceTestSuite {
 
     @Test
     public void validateMinInfo_InvalidPassword() throws InvalidInputException {
-        User user = new User("John", "Doe", "jDoe@email.net", "Password", 100000);
+        User user = new User(100100, "John", "Doe", "jDoe@email.net", "Password");
 
         InvalidInputException e = assertThrows(InvalidInputException.class, () -> uServ.validateUserInfo(user));
         assertEquals("Password doesn't fit security criteria", e.getMessage());
     }
-
 }

@@ -1,21 +1,27 @@
 package com.revature.bankingapp.User;
 
+import com.revature.bankingapp.util.exceptions.DataNotFoundException;
 import com.revature.bankingapp.util.exceptions.InvalidInputException;
+import com.revature.bankingapp.util.interfaces.Controller;
+import io.javalin.Javalin;
+import io.javalin.http.Context;
+import io.javalin.http.HttpStatus;
 
 import java.util.Random;
-import java.util.Scanner;
-import java.util.function.Predicate;
 
-public class UserController {
-    public Scanner scanner;
+import static com.revature.bankingapp.BankAppFrontController.logger;
+
+public class UserController implements Controller {
     private final UserService userService;
 
-    //private Predicate<String> isNotEmpty = str -> str != null && !str.isBlank();
-
     //Constructor
-    public UserController(Scanner scanner, UserService userService) {
-        this.scanner = scanner;
+    public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @Override
+    public void registerPaths(Javalin app) {
+        app.get("user/(userId)", this::getUserById);
     }
 
     // Sign up new users.
@@ -23,24 +29,17 @@ public class UserController {
         Random rand = new Random();
         int userId = rand.nextInt(999999 - 100001) + 100000;
 
-        scanner = new Scanner(System.in);
+        String firstName = "";
+        //firstName = firstName.substring(0, 1).toUpperCase() + firstName.substring(1);
 
-        System.out.print("Please enter your first name: ");
-        String firstName = scanner.next();
-        firstName = firstName.substring(0, 1).toUpperCase() + firstName.substring(1);
+        String lastName = "";
+        //lastName = lastName.substring(0, 1).toUpperCase() + lastName.substring(1);
 
-        System.out.print("Please enter your last name: ");
-        String lastName = scanner.next();
-        lastName = lastName.substring(0, 1).toUpperCase() + lastName.substring(1);
-
-        System.out.print("Please enter your email address: ");
-        String email = scanner.next();
-
-        System.out.print("Enter a password: ");
-        String password = scanner.next();
+        String email = "";
+        String password = "";
 
         try {
-            User newUser = new User(firstName, lastName, email, password, userId);
+            User newUser = new User(userId, firstName, lastName, email, password);
             userService.create(newUser);
 
             return newUser;
@@ -51,15 +50,29 @@ public class UserController {
         }
     }
 
-    /**
+    /*
      * Displays the user's information in the following format:
      * Name: [firstName] [lastName]
      * Email: [email]
      * User Id: [userId]
      *
-     * @param user the user whose information should be accessed
      */
-    public void viewUserInfo(User user) {
-        System.out.println(user.toString());
+    public void getUserById(Context ctx) {
+        int userId = Integer.parseInt(ctx.pathParam("userId"));
+        logger.info("Accessing user info.....");
+        try {
+            User user = userService.findById(userId); //TODO: userService.?
+            logger.info("User {} found, converting to JSON", userId);
+            ctx.json(user);
+            logger.info("Sending back to user");
+        } catch (DataNotFoundException e) {
+            logger.warn("Data was not found. Responded with 404");
+            ctx.status(HttpStatus.NOT_FOUND);
+        } catch (RuntimeException e) {
+            logger.warn("Something else is amiss");
+            e.printStackTrace();
+            ctx.status(500);
+        }
     }
+
 }

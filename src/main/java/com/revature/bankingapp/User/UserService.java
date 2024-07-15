@@ -6,6 +6,8 @@ import com.revature.bankingapp.util.interfaces.Serviceable;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
+import static com.revature.bankingapp.BankAppFrontController.logger;
+
 public class UserService implements Serviceable<User> {
     private Predicate<String> isNotEmpty = str -> str != null && !str.isBlank();
     private UserRepository userRepository;
@@ -23,7 +25,17 @@ public class UserService implements Serviceable<User> {
 
     @Override
     public User findById(int userId) {
-        return userRepository.findById(userId);
+        logger.info("User Id was sent to service as {}", userId);
+        User user = userRepository.findById(userId);
+        logger.info("User returned as {}", user);
+        return user;
+    }
+
+    public User findByEmailAndPassword(String email, String password) throws InvalidInputException {
+        if(!isNotEmpty.test(email) || !isNotEmpty.test(password))
+            throw new InvalidInputException("One or more fields were left empty.");
+
+        return userRepository.findByEmailAndPassword(email, password);
     }
 
     /**
@@ -62,10 +74,5 @@ public class UserService implements Serviceable<User> {
             throw new InvalidInputException("Password doesn't fit security criteria");
     }
 
-    public User findByEmailAndPassword(String email, String password) throws InvalidInputException {
-        if(!isNotEmpty.test(email) || !isNotEmpty.test(password))
-            throw new InvalidInputException("One or more fields were left empty.");
 
-        return userRepository.findByEmailAndPassword(email, password);
-    }
 }

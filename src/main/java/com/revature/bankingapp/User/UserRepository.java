@@ -1,6 +1,5 @@
 package com.revature.bankingapp.User;
 
-import com.revature.bankingapp.Account.Account;
 import com.revature.bankingapp.util.ConnectionFactory;
 import com.revature.bankingapp.util.exceptions.DataNotFoundException;
 import com.revature.bankingapp.util.exceptions.InvalidInputException;
@@ -10,6 +9,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import static com.revature.bankingapp.BankAppFrontController.logger;
 
 public class UserRepository implements Crudable<User> {
 
@@ -66,6 +67,7 @@ public class UserRepository implements Crudable<User> {
     @Override
     public User findById(int userId) {
         try(Connection con = ConnectionFactory.getConnectionFactory().getConnection()) {
+            logger.info("User id provided by the service is {}", userId);
             String sql = "select * from users where user_id = ?;";
 
             PreparedStatement ps = con.prepareStatement(sql);
