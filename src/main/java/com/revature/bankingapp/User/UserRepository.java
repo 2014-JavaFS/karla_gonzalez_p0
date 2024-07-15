@@ -75,6 +75,9 @@ public class UserRepository implements Crudable<User> {
 
             ResultSet rs = ps.executeQuery();
 
+            if(!rs.next())
+                throw new DataNotFoundException("No user found under that Id.....");
+
             return generateUserFromResultSet(rs);
 
         } catch(SQLException e) {

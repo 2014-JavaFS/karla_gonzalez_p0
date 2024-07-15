@@ -1,17 +1,21 @@
 package com.revature.bankingapp.User;
 
+import com.revature.bankingapp.Account.Account;
 import com.revature.bankingapp.util.exceptions.DataNotFoundException;
 import com.revature.bankingapp.util.exceptions.InvalidInputException;
 import com.revature.bankingapp.util.interfaces.Controller;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Random;
 
 import static com.revature.bankingapp.BankAppFrontController.logger;
 
 public class UserController implements Controller {
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
 
     //Constructor
@@ -21,7 +25,7 @@ public class UserController implements Controller {
 
     @Override
     public void registerPaths(Javalin app) {
-        app.get("user/(userId)", this::getUserById);
+        app.get("/user/{userId}", this::getUserById);
     }
 
     // Sign up new users.
@@ -50,21 +54,15 @@ public class UserController implements Controller {
         }
     }
 
-    /*
-     * Displays the user's information in the following format:
-     * Name: [firstName] [lastName]
-     * Email: [email]
-     * User Id: [userId]
-     *
-     */
-    public void getUserById(Context ctx) {
+    private void getUserById(Context ctx) {
         int userId = Integer.parseInt(ctx.pathParam("userId"));
-        logger.info("Accessing user info.....");
+
+        logger.info("User Id {}, {}", userId, "sent thorough path parameter");
+
         try {
-            User user = userService.findById(userId); //TODO: userService.?
+            User returnedUser = userService.findById(userId);
             logger.info("User {} found, converting to JSON", userId);
-            ctx.json(user);
-            logger.info("Sending back to user");
+            ctx.json(returnedUser);
         } catch (DataNotFoundException e) {
             logger.warn("Data was not found. Responded with 404");
             ctx.status(HttpStatus.NOT_FOUND);
@@ -73,6 +71,6 @@ public class UserController implements Controller {
             e.printStackTrace();
             ctx.status(500);
         }
-    }
 
+    }
 }

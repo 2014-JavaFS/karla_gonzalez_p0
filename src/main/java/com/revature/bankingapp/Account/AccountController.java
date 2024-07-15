@@ -1,11 +1,11 @@
 package com.revature.bankingapp.Account;
 
-import com.revature.bankingapp.util.ScannerValidator;
 import com.revature.bankingapp.util.exceptions.InvalidInputException;
+import com.revature.bankingapp.util.interfaces.Controller;
+import io.javalin.Javalin;
+import io.javalin.http.Context;
 
-import java.util.Scanner;
-
-public class AccountController {
+public class AccountController implements Controller {
     private AccountService accountService;
 
     /**
@@ -15,6 +15,11 @@ public class AccountController {
      */
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
+    }
+
+    @Override
+    public void registerPaths(Javalin app) {
+        app.get("/account/{userId}", this::getAccountById);
     }
 
     /**
@@ -50,6 +55,19 @@ public class AccountController {
     }
 
     /**
+     * Retrieve the account associated with the current user using their id
+     *
+     * @param userId id of the current user
+     * @return account associated with user
+     */
+    private void getAccountById(Context ctx) {
+        int userId = Integer.parseInt(ctx.pathParam("userId"));
+        Account returnedAccount = accountService.findById(userId);
+
+        ctx.json(returnedAccount);
+    }
+
+    /**
      * Increases the amount of money in the account
      *
      * @param account the account to add money to
@@ -61,7 +79,6 @@ public class AccountController {
             if (accountService.updateAccountBalance(account.getUserId(), amt))
                 account.setAccountBalance(amt);
         }
-
  */
     }
 
@@ -89,7 +106,6 @@ public class AccountController {
 
  */
 
-
         if (validAmt) {
             balance -= amt;
             if (accountService.updateAccountBalance(account.getUserId(), balance))
@@ -106,13 +122,4 @@ public class AccountController {
         System.out.println(account.toString());
     }
 
-    /**
-     * Retrieve the account associated with the current user using their id
-     *
-     * @param userId id of the current user
-     * @return account associated with user
-     */
-    public Account getAccountById(int userId) {
-        return accountService.findById(userId);
-    }
 }
