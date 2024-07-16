@@ -9,6 +9,9 @@ public class Account {
         SAVINGS
     };
 
+    /**
+     * Default Constructor
+     */
     public Account() {}
 
     /**

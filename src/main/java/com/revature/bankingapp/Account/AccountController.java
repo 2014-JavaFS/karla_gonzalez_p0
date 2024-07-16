@@ -6,7 +6,7 @@ import io.javalin.Javalin;
 import io.javalin.http.Context;
 
 public class AccountController implements Controller {
-    private AccountService accountService;
+    private final AccountService accountService;
     private Account account;
 
     /**
@@ -20,37 +20,21 @@ public class AccountController implements Controller {
 
     @Override
     public void registerPaths(Javalin app) {
+        app.post("/account/{userId}", this::createAccount);
         app.get("/account/{userId}", this::getAccountById);
-        app.post("/account/{userId}", this::postTransaction);
+        app.post("/account/transaction/{userId}", this::postTransaction);
     }
 
-    /**
-     * Creates a new checking or savings account
-     *
-     * @param   userId the id of the user associated with the new account
-     * @return  the newly created account
-     */
-    public void createAccount(int userId) {
-        Account.AccountType accountType = null;
+    public void createAccount(Context ctx) {
+        int userId = Integer.parseInt(ctx.pathParam("userId"));
+        String accountType = ctx.queryParam("accountType");
 
 
-//        switch (opt) {
-//            case 1:
-//                accountType = Account.AccountType.valueOf("CHECKING");
-//                accountCreated = true;
-//                break;
-//            case 2:
-//                accountType = Account.AccountType.valueOf("SAVINGS");
-//                accountCreated = true;
-//                break;
-//            default:
-//                System.out.println("Please enter either 1 or 2");
-//        }
-
-        Account account = new Account(accountType, userId, 0.0);
+        account = new Account(Account.AccountType.valueOf(accountType), userId, 0.0);
 
         try {
             accountService.create(account);
+
         } catch (InvalidInputException e) {
             e.printStackTrace();
         }
@@ -74,6 +58,7 @@ public class AccountController implements Controller {
 
         String transactionType = ctx.queryParam("transactionType");
         double amount = Double.parseDouble(ctx.queryParam("amount"));
+
         try {
             if (transactionType.equals("deposit")) {
                 accountService.validateDeposit(amount);
