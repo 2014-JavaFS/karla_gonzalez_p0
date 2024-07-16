@@ -43,15 +43,14 @@ public class UserRepository implements Crudable<User> {
     public User create(User newUser) throws InvalidInputException {
         try(Connection con = ConnectionFactory.getConnectionFactory().getConnection()) {
 
-            String sql = "insert into users(user_id, first_name, last_name, email, password) values(?, ?, ?, ?, ?);";
+            String sql = "insert into users(first_name, last_name, email, password) values(?, ?, ?, ?);";
 
             PreparedStatement ps = con.prepareStatement(sql);
 
-            ps.setInt(1, newUser.getUserId());
-            ps.setString(2, newUser.getFirstName());
-            ps.setString(3, newUser.getLastName());
-            ps.setString(4, newUser.getEmail());
-            ps.setString(5, newUser.getPassword());
+            ps.setString(1, newUser.getFirstName());
+            ps.setString(2, newUser.getLastName());
+            ps.setString(3, newUser.getEmail());
+            ps.setString(4, newUser.getPassword());
 
             if(ps.executeUpdate() == 0)
                 throw new RuntimeException("User could not be inserted into the database");

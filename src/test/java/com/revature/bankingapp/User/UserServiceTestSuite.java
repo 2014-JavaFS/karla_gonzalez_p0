@@ -67,22 +67,6 @@ public class UserServiceTestSuite {
     }
 
     @Test
-    public void validateMinInfo_UserIdTooLong() throws InvalidInputException {
-        User user = new User(1000010, "John", "Doe", "jDoe@email.net", "R3vat$u2");
-
-        InvalidInputException e = assertThrows(InvalidInputException.class, () -> uServ.validateUserInfo(user));
-        assertEquals("User Id should be exactly 6 digits long", e.getMessage());
-    }
-
-    @Test
-    public void validateMinInfo_UserIdTooShort() throws InvalidInputException {
-        User user = new User(1000, "John", "Doe", "jDoe@email.net", "R3vat$u2");
-
-        InvalidInputException e = assertThrows(InvalidInputException.class, () -> uServ.validateUserInfo(user));
-        assertEquals("User Id should be exactly 6 digits long", e.getMessage());
-    }
-
-    @Test
     public void validateMinInfo_InvalidEmailFormat() throws InvalidInputException {
         User user = new User(100000, "John", "Doe", "jDoeemail@net", "R3vat$u2");
 

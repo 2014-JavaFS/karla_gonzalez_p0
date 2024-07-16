@@ -53,3 +53,40 @@ select account_type, account_balance from accounts
 select account_balance from accounts
     where user_id = '123123'
     and account_type = 'CHECKING';
+  
+   
+-- Joins and Alliases
+select a.*, u.first_name, u.last_name
+from accounts a
+inner join users u on a.user_id = u.user_id
+order by a.user_id;
+
+-- Aggregate Functions and Aliases (Columns)
+select count(*) as total_users from users;
+
+DROP FUNCTION generate_user_id()
+
+-- Functions
+create or replace function generate_user_id()
+returns trigger
+language plpgsql
+as $$
+declare new_id integer;
+begin
+	select random()*1000000 into new_id;
+	if new.user_id is null then 
+		update users 
+	set user_id = new_id;
+	end if;
+	return new;
+end; $$
+
+
+-- Triggers
+create or replace trigger assign_user_id 
+before insert 
+on users
+for each row
+execute function generate_user_id
+
+

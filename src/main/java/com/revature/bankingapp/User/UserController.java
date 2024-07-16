@@ -1,6 +1,5 @@
 package com.revature.bankingapp.User;
 
-import com.revature.bankingapp.Account.Account;
 import com.revature.bankingapp.util.exceptions.DataNotFoundException;
 import com.revature.bankingapp.util.exceptions.InvalidInputException;
 import com.revature.bankingapp.util.interfaces.Controller;
@@ -10,15 +9,13 @@ import io.javalin.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Random;
-
 import static com.revature.bankingapp.BankAppFrontController.logger;
 
 public class UserController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
 
-    //Constructor
+
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -26,31 +23,18 @@ public class UserController implements Controller {
     @Override
     public void registerPaths(Javalin app) {
         app.get("/user/{userId}", this::getUserById);
+        app.post("/user", this::postNewUser);
     }
 
-    // Sign up new users.
-    public User createUser() {
-        Random rand = new Random();
-        int userId = rand.nextInt(999999 - 100001) + 100000;
 
-        String firstName = "";
-        //firstName = firstName.substring(0, 1).toUpperCase() + firstName.substring(1);
-
-        String lastName = "";
-        //lastName = lastName.substring(0, 1).toUpperCase() + lastName.substring(1);
-
-        String email = "";
-        String password = "";
-
+    public void postNewUser(Context ctx) {
+        User newUser = ctx.bodyAsClass(User.class);
+        // TODO: Returning userId as 0 in postman even though id is being created successfully
         try {
-            User newUser = new User(userId, firstName, lastName, email, password);
-            userService.create(newUser);
-
-            return newUser;
-
+            ctx.json(userService.create(newUser));
+            ctx.status(HttpStatus.CREATED);
         } catch (InvalidInputException e) {
-            System.out.println(e.getMessage());
-            return null;
+            e.printStackTrace();
         }
     }
 
@@ -71,6 +55,5 @@ public class UserController implements Controller {
             e.printStackTrace();
             ctx.status(500);
         }
-
     }
 }

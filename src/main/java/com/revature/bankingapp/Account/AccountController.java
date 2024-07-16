@@ -7,6 +7,7 @@ import io.javalin.http.Context;
 
 public class AccountController implements Controller {
     private AccountService accountService;
+    private Account account;
 
     /**
      * Constructor that requires dependencies to create an instance of this class
@@ -20,6 +21,7 @@ public class AccountController implements Controller {
     @Override
     public void registerPaths(Javalin app) {
         app.get("/account/{userId}", this::getAccountById);
+        app.post("/account/{userId}", this::postTransaction);
     }
 
     /**
@@ -56,70 +58,51 @@ public class AccountController implements Controller {
 
     /**
      * Retrieve the account associated with the current user using their id
-     *
-     * @param userId id of the current user
-     * @return account associated with user
      */
     private void getAccountById(Context ctx) {
         int userId = Integer.parseInt(ctx.pathParam("userId"));
-        Account returnedAccount = accountService.findById(userId);
+        this.account = accountService.findById(userId);
 
-        ctx.json(returnedAccount);
+        ctx.json(account);
     }
 
     /**
      * Increases the amount of money in the account
-     *
-     * @param account the account to add money to
      */
-    public void deposit(Account account) {
-/*
-        if (validAmt) {
-            amt += account.getAccountBalance();
-            if (accountService.updateAccountBalance(account.getUserId(), amt))
-                account.setAccountBalance(amt);
+    public void postTransaction(Context ctx) {
+        getAccountById(ctx);
+
+        String transactionType = ctx.queryParam("transactionType");
+        double amount = Double.parseDouble(ctx.queryParam("amount"));
+        try {
+            if (transactionType.equals("deposit")) {
+                accountService.validateDeposit(amount);
+                deposit(amount);
+            }
+
+            if (transactionType.equals("withdraw")) {
+                accountService.validateWithdrawal(amount, account.getAccountBalance());
+                withdraw(amount);
+            }
+
+        } catch (InvalidInputException e) {
+            e.printStackTrace();
         }
- */
+        ctx.json(account);
     }
 
-    /**
-     * reduces the amount of money in the account
-     *
-     * @param account the account to withdraw from
-     */
-    public void withdraw(Account account) {
-        double amt = 0.0;
+    public void deposit(double amount) {
+        amount += account.getAccountBalance();
+
+        if (accountService.updateAccountBalance(account.getUserId(), amount))
+            account.setAccountBalance(amount);
+    }
+
+    public void withdraw(double amount) {
         double balance = account.getAccountBalance();
-        boolean validAmt = false;
+        balance -= amount;
 
-/*
-        if (amt == -1)
-            break;
-        if (amt <= 0) {
-            System.out.println("\nAmount should be greater than zero");
-            continue;
-        }
-        if (amt > balance) {
-            System.out.println("\nCannot withdraw more than your current account balance");
-            continue;
-        }
-
- */
-
-        if (validAmt) {
-            balance -= amt;
-            if (accountService.updateAccountBalance(account.getUserId(), balance))
-                account.setAccountBalance(balance);
-        }
+        if (accountService.updateAccountBalance(account.getUserId(), balance))
+            account.setAccountBalance(balance);
     }
-
-    /**
-     * Prints the current amount in the user's account
-     *
-     * @param account the account information to print out
-     */
-    public void viewBalance(Account account) {
-        System.out.println(account.toString());
-    }
-
 }
