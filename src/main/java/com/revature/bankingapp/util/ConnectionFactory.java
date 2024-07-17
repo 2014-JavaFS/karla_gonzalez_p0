@@ -8,11 +8,13 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionFactory {
-    private static ConnectionFactory connectionFactory = new ConnectionFactory();
-    private Properties properties = new Properties();
+    private static final ConnectionFactory connectionFactory = new ConnectionFactory();
+    private final Properties properties = new Properties();
 
     /**
-     * Private constructor, only executable within this class
+     * Private constructor used to initialize the database properties.
+     * Reads database configuration from the 'db.properties' file.
+     * If the file is not found or cannot be read, an IOException will be caught and logged.
      */
     private ConnectionFactory() {
         try {
@@ -22,6 +24,10 @@ public class ConnectionFactory {
         }
     }
 
+    /**
+     * Static block used for loading the PostgreSQL JDBC driver every time the class is loaded.
+     * A ClassNotFoundException will be caught and logged if the class is not found.
+     */
     static {
         try {
             Class.forName("org.postgresql.Driver");
@@ -30,10 +36,21 @@ public class ConnectionFactory {
         }
     }
 
+    /**
+     * Singleton instance of ConnectionFactory
+     *
+     * @return an instance of ConnectionFactory
+     */
     public static ConnectionFactory getConnectionFactory() {
         return connectionFactory;
     }
 
+    /**
+     * Connects to the database using the properties loaded during initialization.
+     * Will catch and log an SQLException if a connection cannot be established.
+     *
+     * @return the database connection or null if an exception occurs
+     */
     public Connection getConnection() {
         try {
             return DriverManager.getConnection(properties.getProperty("url"),

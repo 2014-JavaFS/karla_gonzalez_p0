@@ -3,17 +3,13 @@ package com.revature.bankingapp.User;
 import com.revature.bankingapp.util.exceptions.InvalidInputException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class UserServiceTestSuite {
-    //@Mock
     private UserRepository mockUserRepository;
-    //@InjectMocks
     private UserService uServ;
 
     @BeforeEach

@@ -40,5 +40,6 @@ public class BankAppFrontController {
         authController.registerPaths(app);
 
         app.start(8080);
+        logger.info("Javalin app successfully started.....");
     }
 }

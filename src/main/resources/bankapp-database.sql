@@ -31,7 +31,6 @@ insert into accounts (user_id, account_type, account_balance)
            (456598, 'CHECKING', 260.88),
            (777333, 'CHECKING', 5.52),
            (101010, 'SAVINGS', 0.02);
-           (123123, 'CHECKING', 260.88);
 
 -- Function for new user insert
 create or replace function generate_user_id()
@@ -46,7 +45,6 @@ begin
 end;
 $$;
 
-
 -- Trigger for new user insert
 create or replace trigger assign_user_id
 before insert
@@ -54,7 +52,8 @@ on users
 for each row
 execute function generate_user_id();
 
-insert into users (first_name, last_name, email, password) values('Remmy', 'Doe', 'remmy2@email.net', 'R3v@200sr');
+-- Testing function and trigger
+insert into users (first_name, last_name, email, password) values('Remmy', 'Tatouille', 'remmy2@email.net', 'R3v@200sr');
 
 --show tables
 select * from users;
@@ -63,5 +62,3 @@ select * from accounts;
 select u.user_id, u.first_name, u.last_name, a.account_type, a.account_balance from users as u
 full join accounts as a
 	on u.user_id = a.user_id;
-
-

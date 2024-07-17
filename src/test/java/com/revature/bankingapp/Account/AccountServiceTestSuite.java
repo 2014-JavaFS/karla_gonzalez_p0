@@ -3,16 +3,12 @@ package com.revature.bankingapp.Account;
 import com.revature.bankingapp.util.exceptions.InvalidInputException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class AccountServiceTestSuite {
-    //@Mock
     private AccountRepository mockAccountRepository;
-    //@InjectMocks
     private AccountService accServ;
 
     @BeforeEach
