@@ -6,6 +6,8 @@ import com.revature.bankingapp.util.interfaces.Serviceable;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
+import static com.revature.bankingapp.BankAppFrontController.logger;
+
 public class UserService implements Serviceable<User> {
     private Predicate<String> isNotEmpty = str -> str != null && !str.isBlank();
     private UserRepository userRepository;
@@ -23,7 +25,17 @@ public class UserService implements Serviceable<User> {
 
     @Override
     public User findById(int userId) {
-        return userRepository.findById(userId);
+        logger.info("User Id was sent to service as {}", userId);
+        User user = userRepository.findById(userId);
+        logger.info("User returned as {}", user);
+        return user;
+    }
+
+    public User findByEmailAndPassword(String email, String password) throws InvalidInputException {
+        if(!isNotEmpty.test(email) || !isNotEmpty.test(password))
+            throw new InvalidInputException("One or more fields were left empty.");
+
+        return userRepository.findByEmailAndPassword(email, password);
     }
 
     /**
@@ -41,7 +53,6 @@ public class UserService implements Serviceable<User> {
         if (user == null)
             throw new InvalidInputException("User is null as it has not been instantiated in memory");
 
-        int userId = user.getUserId();
         String email = user.getEmail();
         String password = user.getPassword();
 
@@ -50,22 +61,11 @@ public class UserService implements Serviceable<User> {
         || !isNotEmpty.test(password))
             throw new InvalidInputException("One or more values are empty");
 
-        // Ensure user id is exactly 6 digits long
-        if (userId > 999999 || userId < 100000)
-            throw new InvalidInputException("User Id should be exactly 6 digits long");
-
         // Ensure email is in the correct format using regex pattern
         if (!Pattern.compile(emailPattern).matcher(email).matches())
             throw new InvalidInputException("Invalid email address");
 
         if (!Pattern.compile(passwordPattern).matcher(password).matches())
             throw new InvalidInputException("Password doesn't fit security criteria");
-    }
-
-    public User findByEmailAndPassword(String email, String password) throws InvalidInputException {
-        if(!isNotEmpty.test(email) || !isNotEmpty.test(password))
-            throw new InvalidInputException("One or more fields were left empty.");
-
-        return userRepository.findByEmailAndPassword(email, password);
     }
 }

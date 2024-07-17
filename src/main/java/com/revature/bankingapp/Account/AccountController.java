@@ -1,186 +1,109 @@
 package com.revature.bankingapp.Account;
 
-import com.revature.bankingapp.util.ScannerValidator;
+import com.revature.bankingapp.util.exceptions.DataNotFoundException;
 import com.revature.bankingapp.util.exceptions.InvalidInputException;
+import com.revature.bankingapp.util.interfaces.Controller;
+import io.javalin.Javalin;
+import io.javalin.http.Context;
+import io.javalin.http.HttpStatus;
 
-import java.util.Scanner;
+import java.util.Objects;
 
-public class AccountController {
-    public Scanner scanner;
-    private AccountService accountService;
-
-    /**
-     * Input validation methods which ensures the user enters a numerical value wherever a number is required.
-     * If the user inputs anything that isn't a number, an error message is displayed
-     *
-     * returns true if the user inputs a number, otherwise it returns false.
-     */
-    ScannerValidator anyInt = (scanner, errorMsg) -> {
-        if(!scanner.hasNextInt()) {
-            System.out.println(errorMsg);
-            scanner.next();
-            return false;
-        }
-        return true;
-    };
-
-    ScannerValidator anyDouble = (scanner, errorMsg) -> {
-        if(!scanner.hasNextDouble()) {
-            System.out.println(errorMsg);
-            scanner.next();
-            return false;
-        }
-        return true;
-    };
+public class AccountController implements Controller {
+    private final AccountService accountService;
+    private Account account;
 
     /**
      * Constructor that requires dependencies to create an instance of this class
      *
-     * @param scanner           used for accepting user input
      * @param accountService    used for validating that input
      */
-    public AccountController(Scanner scanner, AccountService accountService) {
-        this.scanner = scanner;
+    public AccountController(AccountService accountService) {
         this.accountService = accountService;
     }
 
-    /**
-     * Creates a new checking or savings account
-     *
-     * @param   userId the id of the user associated with the new account
-     * @return  the newly created account
-     */
-    public void createAccount(int userId) {
-        int opt;
-        boolean accountCreated = false;
-        Account.AccountType accountType = null;
+    @Override
+    public void registerPaths(Javalin app) {
+        app.post("/account", this::postNewAccount);
+        app.get("/account", this::getAccountById);
+        app.post("/account/transaction", this::postTransaction);
+    }
 
-        do {
-            System.out.println("Select account type");
-            System.out.println("1. Checking\n2. Savings");
+    public void postNewAccount(Context ctx) {
+        int userId = Integer.parseInt(Objects.requireNonNull(ctx.queryParam("userId")));
 
-            if(anyInt.isValid(scanner, "\nInvalid data type, please enter either 1 or 2")) {
-                opt = scanner.nextInt();
+        String accountType = ctx.queryParam("accountType");
 
-                switch (opt) {
-                    case 1:
-                        accountType = Account.AccountType.valueOf("CHECKING");
-                        accountCreated = true;
-                        break;
-                    case 2:
-                        accountType = Account.AccountType.valueOf("SAVINGS");
-                        accountCreated = true;
-                        break;
-                    default:
-                        System.out.println("Please enter either 1 or 2");
-                }
-            }
-        } while (!accountCreated);
-
-        Account account = new Account(accountType, userId, 0.0);
+        account = new Account(Account.AccountType.valueOf(accountType), userId, 0.0);
 
         try {
-            accountService.create(account);
+            ctx.json(accountService.create(account));
+            ctx.status(HttpStatus.CREATED);
+
         } catch (InvalidInputException e) {
             e.printStackTrace();
+
+            ctx.status(400);
+            ctx.result("Invalid input. Please ensure all fields are filled out correctly");
         }
-    }
-
-    /**
-     * Increases the amount of money in the account
-     *
-     * @param account the account to add money to
-     */
-    public void deposit(Account account) {
-        double amt = 0.0;
-        boolean validAmt = false;
-
-        System.out.println();
-
-        do {
-            System.out.print("Enter amount to deposit or -1 to cancel: $");
-
-            if(anyDouble.isValid(scanner, "\nInvalid data type, please enter a dollar amount")) {
-                amt = scanner.nextDouble();
-
-                if (amt == -1)
-                    break;
-                if (amt <= 0) {
-                    System.out.println("\nAmount should be greater than zero");
-                    continue;
-                }
-                if (amt > 10000) {
-                    System.out.println("\nDeposit limit is $10,000");
-                    continue;
-                }
-
-                validAmt = true;
-            }
-        } while (!validAmt);
-
-        if (validAmt) {
-            amt += account.getAccountBalance();
-            if (accountService.updateAccountBalance(account.getUserId(), amt))
-                account.setAccountBalance(amt);
-        }
-    }
-
-    /**
-     * reduces the amount of money in the account
-     *
-     * @param account the account to withdraw from
-     */
-    public void withdraw(Account account) {
-        double amt = 0.0;
-        double balance = account.getAccountBalance();
-        boolean validAmt = false;
-
-        System.out.println();
-
-        do {
-            System.out.print("Enter amount to withdraw or '-1' to cancel: $");
-
-            if(anyDouble.isValid(scanner, "\nInvalid data type, please enter a dollar amount")) {
-                amt = scanner.nextDouble();
-
-                if (amt == -1)
-                    break;
-                if (amt <= 0) {
-                    System.out.println("\nAmount should be greater than zero");
-                    continue;
-                }
-                if (amt > balance) {
-                    System.out.println("\nCannot withdraw more than your current account balance");
-                    continue;
-                }
-
-                validAmt = true;
-            }
-        } while (!validAmt);
-
-        if (validAmt) {
-            balance -= amt;
-            if (accountService.updateAccountBalance(account.getUserId(), balance))
-                account.setAccountBalance(balance);
-        }
-    }
-
-    /**
-     * Prints the current amount in the user's account
-     *
-     * @param account the account information to print out
-     */
-    public void viewBalance(Account account) {
-        System.out.println(account.toString());
     }
 
     /**
      * Retrieve the account associated with the current user using their id
-     *
-     * @param userId id of the current user
-     * @return account associated with user
      */
-    public Account getAccountById(int userId) {
-        return accountService.findById(userId);
+    private void getAccountById(Context ctx) {
+        try {
+            int userId = Integer.parseInt(Objects.requireNonNull(ctx.queryParam("userId")));
+            this.account = accountService.findById(userId);
+            ctx.json(account);
+        } catch (DataNotFoundException e) {
+            ctx.status(404);
+            ctx.result(e.getMessage());
+        }
+    }
+
+    public void postTransaction(Context ctx) {
+        getAccountById(ctx);
+
+        if(this.account == null) {
+            ctx.status(404);
+            ctx.result("It looks like you don't have an account currently open. Please create one to continue");
+            return;
+        }
+
+        String transactionType = Objects.requireNonNull(ctx.queryParam("transactionType"));
+        double amount = Double.parseDouble(Objects.requireNonNull(ctx.queryParam("amount")));
+
+        try {
+            if (transactionType.equals("deposit")) {
+                accountService.validateDeposit(amount);
+                deposit(amount);
+            }
+
+            if (transactionType.equals("withdraw")) {
+                accountService.validateWithdrawal(amount, account.getAccountBalance());
+                withdraw(amount);
+            }
+
+            ctx.json(account);
+        } catch (InvalidInputException e) {
+            ctx.result(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void deposit(double amount) {
+        amount += account.getAccountBalance();
+
+        if (accountService.updateAccountBalance(account.getUserId(), amount))
+            account.setAccountBalance(amount);
+    }
+
+    public void withdraw(double amount) {
+        double balance = account.getAccountBalance();
+        balance -= amount;
+
+        if (accountService.updateAccountBalance(account.getUserId(), balance))
+            account.setAccountBalance(balance);
     }
 }

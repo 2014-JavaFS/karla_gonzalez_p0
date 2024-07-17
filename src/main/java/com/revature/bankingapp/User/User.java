@@ -10,15 +10,23 @@ public class User {
     // Constructors
     public User() {}
 
-    public User(String firstName, String lastName, String email, String password, int userId) {
+    public User(int userId, String firstName, String lastName, String email, String password) {
+        this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.userId = userId;
     }
 
     // Getters & Setters
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
     public String getFirstName() {
         return firstName;
     }
@@ -49,14 +57,6 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
     }
 
     @Override

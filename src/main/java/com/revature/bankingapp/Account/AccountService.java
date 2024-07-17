@@ -7,7 +7,7 @@ public class AccountService  implements Serviceable<Account> {
     private AccountRepository accountRepository;
 
 
-    public AccountService(AccountRepository accountRepository){
+    public AccountService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
 
@@ -20,6 +20,10 @@ public class AccountService  implements Serviceable<Account> {
     @Override
     public Account findById(int userId) {
         return accountRepository.findById(userId);
+    }
+
+    public boolean delete(int userId) {
+        return accountRepository.delete(userId);
     }
 
     public boolean updateAccountBalance(int userId, double newBalance) {
@@ -37,5 +41,23 @@ public class AccountService  implements Serviceable<Account> {
 
         if (account.getAccountType() == null)
             throw new InvalidInputException("Account type should not be null");
+    }
+
+    public void validateDeposit(double amount) throws InvalidInputException {
+        if (amount <= 0)
+            throw new InvalidInputException("Amount should be greater than zero");
+
+        if (amount > 10000)
+            throw new InvalidInputException("Deposit limit is $10,000");
+
+    }
+
+    public void validateWithdrawal(double amount, double currentBalance) throws InvalidInputException {
+        if (amount <= 0)
+            throw new InvalidInputException("Amount should be greater than zero");
+
+        if (amount > currentBalance)
+            throw new InvalidInputException("Withdrawal amount cannot exceed the current account balance");
+
     }
 }

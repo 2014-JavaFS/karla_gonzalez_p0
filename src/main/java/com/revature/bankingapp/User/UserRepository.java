@@ -1,6 +1,5 @@
 package com.revature.bankingapp.User;
 
-import com.revature.bankingapp.Account.Account;
 import com.revature.bankingapp.util.ConnectionFactory;
 import com.revature.bankingapp.util.exceptions.DataNotFoundException;
 import com.revature.bankingapp.util.exceptions.InvalidInputException;
@@ -10,6 +9,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import static com.revature.bankingapp.BankAppFrontController.logger;
 
 public class UserRepository implements Crudable<User> {
 
@@ -42,15 +43,14 @@ public class UserRepository implements Crudable<User> {
     public User create(User newUser) throws InvalidInputException {
         try(Connection con = ConnectionFactory.getConnectionFactory().getConnection()) {
 
-            String sql = "insert into users(user_id, first_name, last_name, email, password) values(?, ?, ?, ?, ?);";
+            String sql = "insert into users(first_name, last_name, email, password) values(?, ?, ?, ?);";
 
             PreparedStatement ps = con.prepareStatement(sql);
 
-            ps.setInt(1, newUser.getUserId());
-            ps.setString(2, newUser.getFirstName());
-            ps.setString(3, newUser.getLastName());
-            ps.setString(4, newUser.getEmail());
-            ps.setString(5, newUser.getPassword());
+            ps.setString(1, newUser.getFirstName());
+            ps.setString(2, newUser.getLastName());
+            ps.setString(3, newUser.getEmail());
+            ps.setString(4, newUser.getPassword());
 
             if(ps.executeUpdate() == 0)
                 throw new RuntimeException("User could not be inserted into the database");
@@ -66,12 +66,16 @@ public class UserRepository implements Crudable<User> {
     @Override
     public User findById(int userId) {
         try(Connection con = ConnectionFactory.getConnectionFactory().getConnection()) {
+            logger.info("User id provided by the service is {}", userId);
             String sql = "select * from users where user_id = ?;";
 
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, userId);
 
             ResultSet rs = ps.executeQuery();
+
+            if(!rs.next())
+                throw new DataNotFoundException("No user found under that Id.....");
 
             return generateUserFromResultSet(rs);
 

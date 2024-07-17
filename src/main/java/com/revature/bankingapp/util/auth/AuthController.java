@@ -1,45 +1,43 @@
 package com.revature.bankingapp.util.auth;
 
 import com.revature.bankingapp.User.User;
-import com.revature.bankingapp.util.exceptions.InvalidInputException;
+import com.revature.bankingapp.util.exceptions.DataNotFoundException;
+import com.revature.bankingapp.util.interfaces.Controller;
+import io.javalin.Javalin;
+import io.javalin.http.Context;
+import io.javalin.http.HttpStatus;
 
 import javax.security.sasl.AuthenticationException;
-import java.util.Scanner;
 
-public class AuthController {
-    private final Scanner scanner;
+public class AuthController implements Controller {
     private final AuthService authService;
 
-    /**
-     * Constructor requiring dependencies. Instantiation will only happen when these dependencies are included.
-     *
-     * @param scanner       used for user input
-     * @param authService   used for validating that input
-     */
-    public AuthController(Scanner scanner, AuthService authService) {
-        this.scanner = scanner;
+    public AuthController(AuthService authService) {
         this.authService = authService;
     }
 
-    /**
-     * Prompts the user to enter an email and password. Then parses this information to the AuthService login() method
-     * to attempt to log the user into the application. If the credentials do not match those in the database an
-     * AuthenticationException is thrown
-     *
-     * @return logged in user or null
-     */
-    public User login() {
+    @Override
+    public void registerPaths(Javalin app) {
+        app.post("/login", this::postLogin);
+    }
+
+    public void postLogin(Context ctx) {
+        String email = ctx.queryParam("email");
+        String password = ctx.queryParam("password");
+
         try {
-            System.out.print("Enter your email: ");
-            String email = scanner.next();
+            User user = authService.login(email, password);
 
-            System.out.print("Enter your password: ");
-            String password = scanner.next();
+            ctx.header("userId", String.valueOf(user.getUserId()));
 
-            return authService.login(email, password);
-        } catch (AuthenticationException | InvalidInputException e) {
-            System.out.println(e.getMessage());
-            return null;
+            ctx.status(HttpStatus.ACCEPTED);
+            ctx.result("Logged in successfully");
+        } catch (AuthenticationException e) {
+            ctx.status(HttpStatus.UNAUTHORIZED);
+            ctx.result(e.getMessage());
+        } catch (DataNotFoundException e) {
+            ctx.status(HttpStatus.UNAUTHORIZED);
+            ctx.result(e.getMessage() + " Please create an account");
         }
     }
 }

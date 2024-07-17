@@ -8,11 +8,8 @@ create table users (
 	first_name  varchar(20) not null,
 	last_name   varchar(30) not null,
 	email       varchar(50) unique not null,
-	password    varchar(60) not null    --TODO: Encrypt via API later
+	password    varchar(60) not null
 );
-
---TODO: Figure out how to pass enum to sql query using preparedStatement
---create type account_enum as enum ('CHECKING', 'SAVINGS');
 
 create table accounts(
 	user_id         integer references users(user_id) on delete cascade,
@@ -34,27 +31,37 @@ insert into accounts (user_id, account_type, account_balance)
            (456598, 'CHECKING', 260.88),
            (777333, 'CHECKING', 5.52),
            (101010, 'SAVINGS', 0.02);
+           (123123, 'CHECKING', 260.88);
+
+-- Function for new user insert
+create or replace function generate_user_id()
+returns trigger
+language plpgsql
+as $$
+declare new_id integer;
+begin
+	select floor(random()* (999999-100000 + 1) + 100000) into new_id;
+	new.user_id := new_id;
+	return new;
+end;
+$$;
+
+
+-- Trigger for new user insert
+create or replace trigger assign_user_id
+before insert
+on users
+for each row
+execute function generate_user_id();
+
+insert into users (first_name, last_name, email, password) values('Remmy', 'Doe', 'remmy2@email.net', 'R3v@200sr');
 
 --show tables
 select * from users;
 select * from accounts;
 
---queries for possible future use
+select u.user_id, u.first_name, u.last_name, a.account_type, a.account_balance from users as u
+full join accounts as a
+	on u.user_id = a.user_id;
 
---use to update password with email
-select password from users
-    where user_id = (
-        select user_id from users
-        where email = 'jdoe23@email.net'
-    );
---use to display user info
-select first_name, last_name, email, user_id from users;
 
---use to display account balances
-select account_type, account_balance from accounts
-    where user_id = 123123;
-
---use to update balance
-select account_balance from accounts
-    where user_id = '123123'
-    and account_type = 'CHECKING';

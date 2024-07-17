@@ -71,7 +71,7 @@ public class AccountRepository implements Crudable<Account> {
             ResultSet rs = ps.executeQuery();
 
             if(!rs.next())
-                throw new DataNotFoundException("No account under that id.....");
+                throw new DataNotFoundException("No account found under that id; please create one to continue.");
 
             return generateAccountFromResultSet(rs);
         } catch(SQLException e) {
@@ -99,7 +99,7 @@ public class AccountRepository implements Crudable<Account> {
             ps.setInt(2, userId);
 
             if (ps.executeUpdate() == 0)
-                throw new RuntimeException("Account could not be inserted into the database");
+                throw new RuntimeException("Account balance could not be updated");
 
             return true;
         } catch (SQLException e) {
