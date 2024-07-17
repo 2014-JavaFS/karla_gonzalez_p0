@@ -31,7 +31,7 @@ public class AuthService {
         try {
             user = userService.findByEmailAndPassword(email,password);
         } catch (InvalidInputException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
         if (user == null)

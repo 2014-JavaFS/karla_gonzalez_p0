@@ -37,7 +37,7 @@ language plpgsql
 as $$
 declare new_id integer;
 begin
-	select random()*1000000 into new_id;
+	select floor(random()* (999999-100000 + 1) + 100000) into new_id;
 	new.user_id := new_id;
 	return new;
 end; 
@@ -56,5 +56,9 @@ insert into users (first_name, last_name, email, password) values('Remmy', 'Doe'
 --show tables
 select * from users;
 select * from accounts;
+
+select u.user_id, u.first_name, u.last_name, a.account_type, a.account_balance from users as u
+full join accounts as a
+	on u.user_id = a.user_id; 
 
 

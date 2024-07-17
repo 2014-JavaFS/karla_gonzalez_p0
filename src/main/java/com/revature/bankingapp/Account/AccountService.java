@@ -57,7 +57,7 @@ public class AccountService  implements Serviceable<Account> {
             throw new InvalidInputException("Amount should be greater than zero");
 
         if (amount > currentBalance)
-            throw new InvalidInputException("Deposit limit is $10,000");
+            throw new InvalidInputException("Withdrawal amount cannot exceed the current account balance");
 
     }
 }

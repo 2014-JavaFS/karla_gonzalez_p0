@@ -1,10 +1,13 @@
 package com.revature.bankingapp.Account;
 
+import com.revature.bankingapp.util.exceptions.DataNotFoundException;
 import com.revature.bankingapp.util.exceptions.InvalidInputException;
 import com.revature.bankingapp.util.interfaces.Controller;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
+
+import java.util.Objects;
 
 public class AccountController implements Controller {
     private final AccountService accountService;
@@ -27,17 +30,8 @@ public class AccountController implements Controller {
     }
 
     public void postNewAccount(Context ctx) {
-        //TODO: throws NumberFormatException when not logged in first through postman (status code: 500)
-        String stringId = ctx.queryParam("userId");
-        System.out.println(stringId);
+        int userId = Integer.parseInt(Objects.requireNonNull(ctx.queryParam("userId")));
 
-        if(stringId == null) {
-            ctx.status(403);
-            ctx.result("You cannot create a new account as you are not logged in");
-            return;
-        }
-
-        int userId = Integer.parseInt(stringId);
         String accountType = ctx.queryParam("accountType");
 
         account = new Account(Account.AccountType.valueOf(accountType), userId, 0.0);
@@ -58,30 +52,27 @@ public class AccountController implements Controller {
      * Retrieve the account associated with the current user using their id
      */
     private void getAccountById(Context ctx) {
-        String stringId = ctx.queryParam("userId");
-
-        if (stringId == null) {
-            ctx.result("Please log in to see account details.");
-            ctx.status(HttpStatus.UNAUTHORIZED);
-            return;
+        try {
+            int userId = Integer.parseInt(Objects.requireNonNull(ctx.queryParam("userId")));
+            this.account = accountService.findById(userId);
+            ctx.json(account);
+        } catch (DataNotFoundException e) {
+            ctx.status(404);
+            ctx.result(e.getMessage());
         }
-
-
-        int userId = Integer.parseInt(stringId);
-
-        this.account = accountService.findById(userId);
-
-        ctx.json(account);
     }
 
-    /**
-     * Increases the amount of money in the account
-     */
     public void postTransaction(Context ctx) {
         getAccountById(ctx);
 
-        String transactionType = ctx.queryParam("transactionType");
-        double amount = Double.parseDouble(ctx.queryParam("amount"));
+        if(this.account == null) {
+            ctx.status(404);
+            ctx.result("It looks like you don't have an account currently open. Please create one to continue");
+            return;
+        }
+
+        String transactionType = Objects.requireNonNull(ctx.queryParam("transactionType"));
+        double amount = Double.parseDouble(Objects.requireNonNull(ctx.queryParam("amount")));
 
         try {
             if (transactionType.equals("deposit")) {
@@ -94,10 +85,11 @@ public class AccountController implements Controller {
                 withdraw(amount);
             }
 
+            ctx.json(account);
         } catch (InvalidInputException e) {
+            ctx.result(e.getMessage());
             e.printStackTrace();
         }
-        ctx.json(account);
     }
 
     public void deposit(double amount) {

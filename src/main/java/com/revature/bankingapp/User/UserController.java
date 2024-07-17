@@ -9,6 +9,8 @@ import io.javalin.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+
 import static com.revature.bankingapp.BankAppFrontController.logger;
 
 public class UserController implements Controller {
@@ -22,24 +24,25 @@ public class UserController implements Controller {
 
     @Override
     public void registerPaths(Javalin app) {
-        app.get("/user/{userId}", this::getUserById);
+        app.get("/user", this::getUserById);
         app.post("/user", this::postNewUser);
     }
 
-
     public void postNewUser(Context ctx) {
         User newUser = ctx.bodyAsClass(User.class);
-        // TODO: Returning userId as 0 in postman even though id is being created successfully
+
         try {
-            ctx.json(userService.create(newUser));
+            userService.create(newUser);
+            ctx.result("Account created. Please login to continue.");
             ctx.status(HttpStatus.CREATED);
+
         } catch (InvalidInputException e) {
             e.printStackTrace();
         }
     }
 
     private void getUserById(Context ctx) {
-        int userId = Integer.parseInt(ctx.pathParam("userId"));
+        int userId = Integer.parseInt(Objects.requireNonNull(ctx.queryParam("userId")));
 
         logger.info("User Id {}, {}", userId, "sent thorough path parameter");
 
