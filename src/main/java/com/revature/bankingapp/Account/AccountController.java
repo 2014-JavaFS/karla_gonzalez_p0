@@ -4,6 +4,7 @@ import com.revature.bankingapp.util.exceptions.InvalidInputException;
 import com.revature.bankingapp.util.interfaces.Controller;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import io.javalin.http.HttpStatus;
 
 public class AccountController implements Controller {
     private final AccountService accountService;
@@ -20,23 +21,36 @@ public class AccountController implements Controller {
 
     @Override
     public void registerPaths(Javalin app) {
-        app.post("/account/{userId}", this::createAccount);
-        app.get("/account/{userId}", this::getAccountById);
-        app.post("/account/transaction/{userId}", this::postTransaction);
+        app.post("/account", this::postNewAccount);
+        app.get("/account", this::getAccountById);
+        app.post("/account/transaction", this::postTransaction);
     }
 
-    public void createAccount(Context ctx) {
-        int userId = Integer.parseInt(ctx.pathParam("userId"));
-        String accountType = ctx.queryParam("accountType");
+    public void postNewAccount(Context ctx) {
+        //TODO: throws NumberFormatException when not logged in first through postman (status code: 500)
+        String stringId = ctx.queryParam("userId");
+        System.out.println(stringId);
 
+        if(stringId == null) {
+            ctx.status(403);
+            ctx.result("You cannot create a new account as you are not logged in");
+            return;
+        }
+
+        int userId = Integer.parseInt(stringId);
+        String accountType = ctx.queryParam("accountType");
 
         account = new Account(Account.AccountType.valueOf(accountType), userId, 0.0);
 
         try {
-            accountService.create(account);
+            ctx.json(accountService.create(account));
+            ctx.status(HttpStatus.CREATED);
 
         } catch (InvalidInputException e) {
             e.printStackTrace();
+
+            ctx.status(400);
+            ctx.result("Invalid input. Please ensure all fields are filled out correctly");
         }
     }
 
@@ -44,7 +58,17 @@ public class AccountController implements Controller {
      * Retrieve the account associated with the current user using their id
      */
     private void getAccountById(Context ctx) {
-        int userId = Integer.parseInt(ctx.pathParam("userId"));
+        String stringId = ctx.queryParam("userId");
+
+        if (stringId == null) {
+            ctx.result("Please log in to see account details.");
+            ctx.status(HttpStatus.UNAUTHORIZED);
+            return;
+        }
+
+
+        int userId = Integer.parseInt(stringId);
+
         this.account = accountService.findById(userId);
 
         ctx.json(account);
