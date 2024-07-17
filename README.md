@@ -4,6 +4,10 @@
 
 A banking application built for Project 0.
 
+
+## ERD
+![](src/main/resources/BankApp_ERD.PNG)
+
 ## User Stories
 ### As a user:
    1. I want to be able to sign up
