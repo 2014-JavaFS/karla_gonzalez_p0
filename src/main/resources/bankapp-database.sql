@@ -52,9 +52,6 @@ on users
 for each row
 execute function generate_user_id();
 
--- Testing function and trigger
-insert into users (first_name, last_name, email, password) values('Remmy', 'Tatouille', 'remmy2@email.net', 'R3v@200sr');
-
 --show tables
 select * from users;
 select * from accounts;

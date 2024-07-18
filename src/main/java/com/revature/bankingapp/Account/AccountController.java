@@ -9,19 +9,26 @@ import io.javalin.http.HttpStatus;
 
 import java.util.Objects;
 
+import static com.revature.bankingapp.BankAppFrontController.logger;
+
 public class AccountController implements Controller {
     private final AccountService accountService;
     private Account account;
 
     /**
-     * Constructor that requires dependencies to create an instance of this class
+     * Creates and initializes an instance of the AccountController class
      *
-     * @param accountService    used for validating that input
+     * @param accountService An instance of the AccountService class
      */
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
     }
 
+    /**
+     * Registers application paths with the provided Javalin instance
+     *
+     * @param app An instance of the Javalin application
+     */
     @Override
     public void registerPaths(Javalin app) {
         app.post("/account", this::postNewAccount);
@@ -29,15 +36,17 @@ public class AccountController implements Controller {
         app.post("/account/transaction", this::postTransaction);
     }
 
+    /**
+     * Handles the POST request to create a new account
+     * Will catch and log any InvalidInputExceptions
+     *
+     * @param ctx The context object representing the HTTP request and response
+     *            Contains the account information in the request body as JSON
+     */
     public void postNewAccount(Context ctx) {
-        int userId = Integer.parseInt(Objects.requireNonNull(ctx.queryParam("userId")));
-
-        String accountType = ctx.queryParam("accountType");
-
-        account = new Account(Account.AccountType.valueOf(accountType), userId, 0.0);
-
         try {
-            ctx.json(accountService.create(account));
+            Account newAccount = ctx.bodyAsClass(Account.class);
+            ctx.json(accountService.create(newAccount));
             ctx.status(HttpStatus.CREATED);
 
         } catch (InvalidInputException e) {
@@ -49,7 +58,11 @@ public class AccountController implements Controller {
     }
 
     /**
-     * Retrieve the account associated with the current user using their id
+     * Handles the GET request to find an account with the provided Id
+     * Will catch and log any DataNotFound and Runtime exceptions
+     *
+     * @param ctx The context object representing the HTTP request and response
+     *            Contains the query parameter 'userId'
      */
     private void getAccountById(Context ctx) {
         try {
@@ -59,9 +72,20 @@ public class AccountController implements Controller {
         } catch (DataNotFoundException e) {
             ctx.status(404);
             ctx.result(e.getMessage());
+        } catch (RuntimeException e) {
+            logger.warn("Something else is amiss");
+            e.printStackTrace();
+            ctx.status(500);
         }
     }
 
+    /**
+     * Handles the POST request to perform a deposit or withdrawal
+     * Will catch and log any InvalidInputExceptions
+     *
+     * @param ctx The context object representing the HTTP request and response
+     *            Contains query parameters 'transactionType' and 'amount'
+     */
     public void postTransaction(Context ctx) {
         getAccountById(ctx);
 
@@ -92,6 +116,11 @@ public class AccountController implements Controller {
         }
     }
 
+    /**
+     * Increases the amount of money in the account balance
+     *
+     * @param amount The amount to add to the account balance
+     */
     public void deposit(double amount) {
         amount += account.getAccountBalance();
 
@@ -99,6 +128,11 @@ public class AccountController implements Controller {
             account.setAccountBalance(amount);
     }
 
+    /**
+     * Reduces the amount of money in the account
+     *
+     * @param amount The amount to remove from the current account balance
+     */
     public void withdraw(double amount) {
         double balance = account.getAccountBalance();
         balance -= amount;

@@ -4,89 +4,90 @@ public class Account {
     private int userId;
     private AccountType accountType;
     private double accountBalance;
+
     public enum AccountType {
         CHECKING,
         SAVINGS
     };
 
     /**
-     * Default Constructor
+     * Default Constructor. Creates an empty Account object.
      */
     public Account() {}
 
     /**
-     * Constructor
+     * Constructs an Account object with the specified attributes
      *
-     * @param accountType       the type of account to be created, can be CHECKING or SAVINGS
      * @param userId            the id of the user associated with this account
+     * @param accountType       the type of account to be created, can be 'CHECKING' or 'SAVINGS'
      * @param accountBalance    the amount of money currently in the account
      */
-    public Account(AccountType accountType, int userId, double accountBalance) {
-        this.accountType = accountType;
+    public Account(int userId, AccountType accountType, double accountBalance) {
         this.userId = userId;
+        this.accountType = accountType;
         this.accountBalance = accountBalance;
     }
 
     /**
-     * Getter for accountType
+     * Retrieves The id of the account owner
      *
-     * @return the type of account (SAVINGS or CHECKING)
-     */
-    public AccountType getAccountType() {
-        return accountType;
-    }
-
-    /**
-     * Setter used for changing the account type
-     *
-     * @param accountType can be either CHECKING or SAVINGS
-     */
-    public void setAccountType(AccountType accountType) {
-        this.accountType = accountType;
-    }
-
-    /**
-     * Getter used to retrieve the id of the account's owner
-     *
-     * @return int id of the user associated with the account
+     * @return The id of the account owner
      */
     public int getUserId() {
         return userId;
     }
 
     /**
-     * Sets the user id
+     * Sets the user id associated with the account
      *
-     * @param userId numerical id of the account owner
+     * @param userId The id of the account owner
      */
     public void setUserId(int userId) {
         this.userId = userId;
     }
 
     /**
-     * Getter used to retrieve the amount of money in the account
+     * Retrieves the account type
      *
-     * @return the amount of money currently in the account
+     * @return  The account type
+     */
+    public AccountType getAccountType() {
+        return accountType;
+    }
+
+    /**
+     * Sets the account type
+     *
+     * @param accountType The account type (Can be 'CHECKING' or 'SAVINGS')
+     */
+    public void setAccountType(AccountType accountType) {
+        this.accountType = accountType;
+    }
+
+    /**
+     * Retrieves the amount of money in the account
+     *
+     * @return The amount of money currently in the account
      */
     public double getAccountBalance() {
         return accountBalance;
     }
 
     /**
-     * Setter used for changing the account balance
+     * Sets the account balance
      *
-     * @param accountBalance the amount to be changed to
+     * @param accountBalance the amount to change the account balance to
      */
     public void setAccountBalance(double accountBalance) {
         this.accountBalance = accountBalance;
     }
 
     /**
-     * An override of the toString() method, used to print out the account information in the following format:
-     * Account Type: [CHECKING/SAVINGS]
-     * Balance: $##.##
+     * Prints out the account information in the following format:
+     *      Account Type: 'accountType'
+     *      Balance: 'accountBalance'
      *
-     * @return a string containing the account information
+     * @return A string containing the account information
      */
     @Override
     public String toString() {

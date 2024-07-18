@@ -2,40 +2,23 @@ package com.revature.bankingapp.Account;
 
 import com.revature.bankingapp.util.ConnectionFactory;
 import com.revature.bankingapp.util.exceptions.DataNotFoundException;
-import com.revature.bankingapp.util.interfaces.Crudable;
+import com.revature.bankingapp.util.interfaces.Serviceable;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class AccountRepository implements Crudable<Account> {
-
-    @Override
-    public boolean update(Account updatedAccount) {
-        //TODO: Implement update method
-        return false;
-    }
-
-    @Override
-    public boolean delete(int userId) {
-        try(Connection con = ConnectionFactory.getConnectionFactory().getConnection()) {
-            String sql = "delete from accounts where user_id = ?;";
-
-            PreparedStatement ps = con.prepareStatement(sql);
-            ps.setInt(1, userId);
-
-            if(ps.executeUpdate() == 0)
-                throw new RuntimeException("The account could not be removed from the database.....");
-
-            System.out.println("Account successfully removed from the database.....");
-            return true;
-        } catch(SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
+public class AccountRepository implements Serviceable<Account> {
+    /**
+     * Executes a SQL query to insert a new account into the database
+     * Will catch and log an SQLException if the query cannot be executed
+     *
+     * @param newAccount The account information to be inserted into the database
+     *
+     * @return  The account inserted into the database
+     *          Null if an SQLException occurs
+     */
     @Override
     public Account create(Account newAccount) {
         try(Connection con = ConnectionFactory.getConnectionFactory().getConnection()) {
@@ -59,6 +42,15 @@ public class AccountRepository implements Crudable<Account> {
         }
     }
 
+    /**
+     * Executes a SQL query to search for and return the account matching the provided user ID
+     * Will catch and log an SQLException if the query cannot be executed
+     *
+     * @param userId The ID to look for
+     *
+     * @return  The account generated from the ResultSet
+     *          Null if an SQLException occurs
+     */
     @Override
     public Account findById(int userId) {
         try(Connection con = ConnectionFactory.getConnectionFactory().getConnection()) {
@@ -80,16 +72,39 @@ public class AccountRepository implements Crudable<Account> {
         }
     }
 
-    private Account generateAccountFromResultSet(ResultSet rs) throws SQLException{
+    /**
+     * Initializes an instance of the Account class with the information retrieved from the database
+     * Will catch and log an SQLException if it is unable to generate an account
+     *
+     * @param rs The ResultSet containing the data retrieved from the database
+     *
+     * @return  The account generated from the ResultSet
+     *          Null if an SQLException occurs
+     */
+    private Account generateAccountFromResultSet(ResultSet rs) {
         Account account = new Account();
 
-        account.setUserId(rs.getInt("user_id"));
-        account.setAccountType(Account.AccountType.valueOf(rs.getString("account_type")));
-        account.setAccountBalance(rs.getDouble("account_balance"));
+        try {
+            account.setUserId(rs.getInt("user_id"));
+            account.setAccountType(Account.AccountType.valueOf(rs.getString("account_type")));
+            account.setAccountBalance(rs.getDouble("account_balance"));
 
-        return account;
+            return account;
+        } catch(SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
+    /**
+     * Executes an SQL query to update the account balance in the database
+     *
+     * @param userId        The id of the account owner
+     * @param newBalance    The new account balance
+     *
+     * @return  True if the query could be executed successfully
+     *          False if an SQLException occurs
+     */
     public boolean updateAccountBalance(int userId, double newBalance) {
         try (Connection con = ConnectionFactory.getConnectionFactory().getConnection()) {
             String sql = "update accounts set account_balance = ? where user_id = ?;";

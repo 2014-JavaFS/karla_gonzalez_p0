@@ -19,7 +19,7 @@ public class AccountServiceTestSuite {
 
     @Test
     public void create_Successful() throws InvalidInputException {
-        Account validAccount = new Account(Account.AccountType.CHECKING, 123123, 10.13);
+        Account validAccount = new Account(123123, Account.AccountType.CHECKING, 10.13);
         when(mockAccountRepository.create(validAccount)).thenReturn(validAccount);
 
         Account returnedAccount = accServ.create(validAccount);
@@ -30,7 +30,7 @@ public class AccountServiceTestSuite {
 
     @Test
     public void findById_Successful() {
-        Account validAccount = new Account(Account.AccountType.CHECKING, 898900, 23.24);
+        Account validAccount = new Account(898900, Account.AccountType.CHECKING, 23.24);
         int validAccountId = 898900;
         when(mockAccountRepository.findById(validAccountId)).thenReturn(validAccount);
 
@@ -53,19 +53,8 @@ public class AccountServiceTestSuite {
     }
 
     @Test
-    public void delete_Successful() {
-        int userId = 898900;
-        when(mockAccountRepository.delete(userId)).thenReturn(true);
-
-        boolean accountDeleted = accServ.delete(userId);
-
-        assertTrue(accountDeleted);
-        verify(mockAccountRepository, times(1)).delete(userId);
-    }
-
-    @Test
     public void validateAccountInfo_MinBalance() throws InvalidInputException {
-        Account account = new Account(Account.AccountType.CHECKING, 123123, -78.54);
+        Account account = new Account(123123, Account.AccountType.CHECKING, -78.54);
 
         InvalidInputException e = assertThrows(InvalidInputException.class, () -> accServ.validateAccountInfo(account));
         assertEquals("Balance cannot be less than zero", e.getMessage());

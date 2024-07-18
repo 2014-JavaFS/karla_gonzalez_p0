@@ -2,7 +2,7 @@ package com.revature.bankingapp.User;
 
 import com.revature.bankingapp.util.ConnectionFactory;
 import com.revature.bankingapp.util.exceptions.DataNotFoundException;
-import com.revature.bankingapp.util.interfaces.Crudable;
+import com.revature.bankingapp.util.interfaces.Serviceable;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,27 +11,16 @@ import java.sql.SQLException;
 
 import static com.revature.bankingapp.BankAppFrontController.logger;
 
-public class UserRepository implements Crudable<User> {
-
-    @Override
-    public boolean delete(int userId) {
-        try(Connection con = ConnectionFactory.getConnectionFactory().getConnection()) {
-            String sql = "delete from users where user_id = ?;";
-
-            PreparedStatement ps = con.prepareStatement(sql);
-            ps.setInt(1, userId);
-
-            if(ps.executeUpdate() == 0)
-                throw new RuntimeException("User could not be removed from the database.....");
-
-            System.out.println("User and their account(s) successfully removed from the database.....");
-            return true;
-        } catch(SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
+public class UserRepository implements Serviceable<User> {
+    /**
+     * Executes a SQL query to insert a new user into the database
+     * Will catch and log an SQLException if the query cannot be executed
+     *
+     * @param newUser The user whose information is to be inserted into the database
+     *
+     * @return  The user inserted into the database
+     *          Null if an SQLException occurs
+     */
     @Override
     public User create(User newUser) {
         try(Connection con = ConnectionFactory.getConnectionFactory().getConnection()) {
@@ -135,6 +124,7 @@ public class UserRepository implements Crudable<User> {
             user.setLastName(rs.getString("last_name"));
             user.setEmail(rs.getString("email"));
             user.setPassword(rs.getString("password"));
+
             return user;
         } catch (SQLException e) {
             e.printStackTrace();
