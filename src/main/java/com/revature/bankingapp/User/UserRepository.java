@@ -2,7 +2,6 @@ package com.revature.bankingapp.User;
 
 import com.revature.bankingapp.util.ConnectionFactory;
 import com.revature.bankingapp.util.exceptions.DataNotFoundException;
-import com.revature.bankingapp.util.exceptions.InvalidInputException;
 import com.revature.bankingapp.util.interfaces.Crudable;
 
 import java.sql.Connection;
@@ -13,12 +12,6 @@ import java.sql.SQLException;
 import static com.revature.bankingapp.BankAppFrontController.logger;
 
 public class UserRepository implements Crudable<User> {
-
-    @Override
-    public boolean update(User updatedUser) {
-        //TODO: Implement update method
-        return false;
-    }
 
     @Override
     public boolean delete(int userId) {
@@ -40,7 +33,7 @@ public class UserRepository implements Crudable<User> {
     }
 
     @Override
-    public User create(User newUser) throws InvalidInputException {
+    public User create(User newUser) {
         try(Connection con = ConnectionFactory.getConnectionFactory().getConnection()) {
 
             String sql = "insert into users(first_name, last_name, email, password) values(?, ?, ?, ?);";
@@ -63,6 +56,15 @@ public class UserRepository implements Crudable<User> {
         }
     }
 
+    /**
+     * Executes a SQL query to search for and return the user matching the provided user ID
+     * Will catch and log an SQLException if the query cannot be executed
+     *
+     * @param userId The ID to look for
+     *
+     * @return  The user generated from the ResultSet
+     *          Null if an SQLException occurs
+     */
     @Override
     public User findById(int userId) {
         try(Connection con = ConnectionFactory.getConnectionFactory().getConnection()) {
@@ -85,6 +87,16 @@ public class UserRepository implements Crudable<User> {
         }
     }
 
+    /**
+     * Executes a SQL query to find and return the user matching the email and password provided
+     * Will catch and log an SQLException if the query cannot be executed
+     *
+     * @param email     The email address to search for in the database
+     * @param password  The password to search for in the database
+     *
+     * @return  The user generated from the ResultSet
+     *          Null if an SQLException occurs
+     */
     public User findByEmailAndPassword(String email, String password) {
         try(Connection con = ConnectionFactory.getConnectionFactory().getConnection()) {
             String sql = "select * from users where email = ? and password = ?;";
@@ -105,15 +117,28 @@ public class UserRepository implements Crudable<User> {
         }
     }
 
-    private User generateUserFromResultSet(ResultSet rs) throws SQLException {
+    /**
+     * Initializes an instance of the User class with the information retrieved from the database
+     * Will catch and log an SQLException if it is unable to generate a user
+     *
+     * @param rs The ResultSet containing the data retrieved from the database
+     *
+     * @return  The user generated from the ResultSet
+     *          Null if an SQLException occurs
+     */
+    private User generateUserFromResultSet(ResultSet rs) {
         User user = new User();
 
-        user.setUserId(rs.getInt("user_id"));
-        user.setFirstName(rs.getString("first_name"));
-        user.setLastName(rs.getString("last_name"));
-        user.setEmail(rs.getString("email"));
-        user.setPassword(rs.getString("password"));
-
-        return user;
+        try {
+            user.setUserId(rs.getInt("user_id"));
+            user.setFirstName(rs.getString("first_name"));
+            user.setLastName(rs.getString("last_name"));
+            user.setEmail(rs.getString("email"));
+            user.setPassword(rs.getString("password"));
+            return user;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

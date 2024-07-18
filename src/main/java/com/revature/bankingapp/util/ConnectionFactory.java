@@ -39,7 +39,7 @@ public class ConnectionFactory {
     /**
      * Singleton instance of ConnectionFactory
      *
-     * @return an instance of ConnectionFactory
+     * @return An instance of ConnectionFactory
      */
     public static ConnectionFactory getConnectionFactory() {
         return connectionFactory;
@@ -49,7 +49,7 @@ public class ConnectionFactory {
      * Connects to the database using the properties loaded during initialization.
      * Will catch and log an SQLException if a connection cannot be established.
      *
-     * @return the database connection or null if an exception occurs
+     * @return The database connection or null if an exception occurs
      */
     public Connection getConnection() {
         try {

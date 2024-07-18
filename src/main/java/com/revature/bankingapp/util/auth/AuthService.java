@@ -12,7 +12,7 @@ public class AuthService {
     /**
      * Creates and initializes an instance of the AuthService class
      *
-     * @param userService an instance of the UserService class
+     * @param userService An instance of the UserService class
      */
     public AuthService(UserService userService) {
         this.userService = userService;
@@ -21,12 +21,12 @@ public class AuthService {
     /**
      * Ensures that the email and password provided match an already existing user.
      *
-     * @param email the email address provided by the user
-     * @param password the password provided by the user
+     * @param email     The email address provided by the user
+     * @param password  The password provided by the user
      *
-     * @return an instance of the User class filled with the existing user's information
+     * @return An instance of the User class filled with the existing user's information
      *
-     * @throws AuthenticationException if the provided email and password do not return a user
+     * @throws AuthenticationException If the provided email and password do not return a user
      */
     public User login(String email, String password) throws AuthenticationException {
         User user = null;

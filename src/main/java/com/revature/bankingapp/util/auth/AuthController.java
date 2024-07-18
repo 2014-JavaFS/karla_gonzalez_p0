@@ -12,15 +12,32 @@ import javax.security.sasl.AuthenticationException;
 public class AuthController implements Controller {
     private final AuthService authService;
 
+    /**
+     * Creates and initializes an instance of the AuthController class
+     *
+     * @param authService An instance of the AuthService class
+     */
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
 
+    /**
+     * Registers application paths with the provided Javalin instance
+     *
+     * @param app An instance of the Javalin application
+     */
     @Override
     public void registerPaths(Javalin app) {
         app.post("/login", this::postLogin);
     }
 
+    /**
+     * Handles the POST request for user login.
+     * Will attempt to authenticate the user by matching the email and password provided to those in the database.
+     *
+     * @param ctx The context object representing the HTTP request and response.
+     *            Contains query parameters 'email' and 'password'
+     */
     public void postLogin(Context ctx) {
         String email = ctx.queryParam("email");
         String password = ctx.queryParam("password");
@@ -37,7 +54,7 @@ public class AuthController implements Controller {
             ctx.result(e.getMessage());
         } catch (DataNotFoundException e) {
             ctx.status(HttpStatus.UNAUTHORIZED);
-            ctx.result(e.getMessage() + " Please create an account");
+            ctx.result(e.getMessage() + " Please sign up to continue.");
         }
     }
 }
