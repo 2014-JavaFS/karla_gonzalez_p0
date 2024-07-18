@@ -50,6 +50,13 @@ public class UserController implements Controller {
 
         } catch (InvalidInputException e) {
             e.printStackTrace();
+            ctx.status(400);
+            ctx.result("Please make sure all fields are filled out correctly.");
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            logger.warn("User account could not be created");
+            ctx.result("Unable to create a new account. That email may already be registered.");
+            ctx.status(500);
         }
     }
 
@@ -61,20 +68,21 @@ public class UserController implements Controller {
      *            Contains the query parameter 'userId'
      */
     private void getUserById(Context ctx) {
-        int userId = Integer.parseInt(Objects.requireNonNull(ctx.queryParam("userId")));
-
-        logger.info("User Id {}, {}", userId, "sent thorough path parameter");
-
         try {
+            int userId = Integer.parseInt(Objects.requireNonNull(ctx.queryParam("userId")));
+
+            logger.info("User Id {}, {}", userId, "sent thorough path parameter");
             User returnedUser = userService.findById(userId);
+
             logger.info("User {} found, converting to JSON", userId);
             ctx.json(returnedUser);
         } catch (DataNotFoundException e) {
             logger.warn("Data was not found. Responded with 404");
             ctx.status(HttpStatus.NOT_FOUND);
         } catch (RuntimeException e) {
-            logger.warn("Something else is amiss");
+            logger.warn("The user id is null");
             e.printStackTrace();
+            ctx.result("Looks like you're not logged in. Please log in to continue.");
             ctx.status(500);
         }
     }

@@ -1,5 +1,6 @@
 package com.revature.bankingapp.Account;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.revature.bankingapp.util.exceptions.DataNotFoundException;
 import com.revature.bankingapp.util.exceptions.InvalidInputException;
 import com.revature.bankingapp.util.interfaces.Controller;
@@ -54,6 +55,10 @@ public class AccountController implements Controller {
 
             ctx.status(400);
             ctx.result("Invalid input. Please ensure all fields are filled out correctly");
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            ctx.result("You cannot create more than one banking account.");
+            ctx.status(403);
         }
     }
 
@@ -75,6 +80,7 @@ public class AccountController implements Controller {
         } catch (RuntimeException e) {
             logger.warn("Something else is amiss");
             e.printStackTrace();
+            ctx.result("Looks like you're not logged in. Please log in to continue");
             ctx.status(500);
         }
     }

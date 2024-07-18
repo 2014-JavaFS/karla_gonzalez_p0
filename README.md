@@ -23,6 +23,10 @@ A banking application built for Project 0.
    6. I want to be able to view my account balance(s)
       1. So that I know how much money I have to spend
 
+## Known Issues
+1. Currently unable to tell the difference between a wrong email/password and a non-existent account
+2. Exception not caught when attempting to create a new banking account without logging in first
+
 ## Must-Have Functionalities:
    1. Register new user account
       - Password
@@ -34,9 +38,11 @@ A banking application built for Project 0.
       - Password
       - Username
    3. Create at least one account
+      - User Id
       - Account Type
-      - Checking
-      - Savings
+        - Checking
+        - Savings
+      - Account Balance
    4. View account balances
       - Show account type
       - Show account balance

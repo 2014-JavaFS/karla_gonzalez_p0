@@ -12,7 +12,7 @@ create table users (
 );
 
 create table accounts(
-	user_id         integer references users(user_id) on delete cascade,
+	user_id         integer unique references users(user_id) on delete cascade,
 	account_type    varchar(10) not null,
 	account_balance numeric not null check(account_balance >= 0)
 );
